@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录 - Smart CTO</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <div id="app"></div>
+  </div>
+
+  <!-- 依赖现有静态配置（与 frontend/index.html 同源）；auth-runtime 由 vite 从 frontend/js 同步到 public/js -->
+  <script src="config.js"></script>
+  <script src="config.local.js"></script>
+  <script src="js/auth-runtime.js"></script>
+
+  <script type="module" src="./src/login/main.ts"></script>
+</body>
+</html>
+

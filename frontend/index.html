@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>企业信息与商业画布查询</title>
+  <!-- 正式首页入口已切至 home.html：无 caseId 时立即跳转；legacyHome=1 为兼容别名，与默认入口一致统一到 home.html -->
+  <script>
+    (function () {
+      try {
+        var u = new URL(window.location.href);
+        var sp = u.searchParams;
+        if (sp.get('caseId')) return;
+        window.location.replace(new URL('home.html', u.href).href);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <nav id="topNav" class="top-nav">
+      <button type="button" id="btnHome" class="btn-nav">首页</button>
+      <span id="navDetailLabel" class="btn-nav btn-nav-active" hidden>企业详情</span>
+      <div class="top-nav-right">
+        <span id="navUserInfo" class="nav-user-info"></span>
+        <button type="button" id="btnModelConfig" class="btn-nav">模型配置</button>
+        <button type="button" id="btnLogout" class="btn-nav btn-logout">退出登录</button>
+      </div>
+    </nav>
+
+    <div id="taskTrackingView" class="view task-tracking-view" hidden>
+      <div class="task-tracking-header">
+        <button type="button" id="btnTaskTrackingBack" class="btn-task-tracking-back">← 返回</button>
+        <h2 id="taskTrackingTitle" class="task-tracking-title">任务追踪</h2>
+      </div>
+      <div class="task-tracking-body">
+        <aside class="task-tracking-sidebar">
+          <div class="task-tracking-sidebar-header">任务列表</div>
+          <div id="taskTrackingList" class="task-tracking-list"></div>
+          <div class="task-tracking-actions">
+            <button type="button" id="btnTaskTrackingEnter" class="btn-task-tracking-enter">进入执行</button>
+          </div>
+        </aside>
+        <main class="task-tracking-main">
+          <div id="taskTrackingDetail" class="task-tracking-detail">
+            <p class="task-tracking-detail-placeholder">请从左侧选择任务查看详情</p>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div id="problemDetailView" class="view problem-detail-view" hidden>
+      <div class="problem-detail-progress">
+        <div class="problem-detail-progress-left">
+          <button type="button" id="btnProblemDetailBack" class="btn-problem-detail-back">← 返回</button>
+          <span id="problemDetailArchiveNoBadge" class="problem-detail-archive-no-badge" title="系统自动分配的案例编号" hidden>案例编号 —</span>
+          <button type="button" id="btnProblemDetailReset" class="btn-problem-detail-reset">重置</button>
+          <button type="button" id="btnProblemDetailRollback" class="btn-problem-detail-rollback" aria-label="回退">回退</button>
+          <button type="button" id="btnProblemDetailRestartTask" class="btn-problem-detail-restart-task" aria-label="重启当前">重启当前</button>
+          <button type="button" id="btnProblemDetailExceptionResume" class="btn-problem-detail-exception-resume" aria-label="异常继续" disabled>异常继续</button>
+        </div>
+        <span class="problem-detail-progress-sep problem-detail-progress-sep--toolbar" aria-hidden="true">|</span>
+        <div class="problem-detail-progress-right">
+          <button type="button" id="btnProblemCasePresalesReport" class="btn-problem-case-presales-report" title="在线版售前方案（新标签页打开）" aria-label="售前方案">售前方案</button>
+          <button type="button" id="btnProblemCaseExport" class="btn-problem-case-export" title="导出当前案例为 JSON 包" aria-label="导出案例">导出</button>
+          <button type="button" id="btnProblemCaseRestore" class="btn-problem-case-restore" title="选择此前导出的 JSON 包，校验档案名称与编号后覆盖恢复当前案例" aria-label="恢复档案">恢复</button>
+          <span class="problem-detail-progress-sep problem-detail-progress-sep--toolbar" aria-hidden="true">|</span>
+          <button type="button" id="btnProblemDetailHistory" class="btn-problem-detail-history" aria-label="沟通历史">沟通历史</button>
+        </div>
+      </div>
+      <div id="problemDetailCaseHeadline" class="problem-detail-case-headline" hidden aria-live="polite"></div>
+      <div class="problem-detail-workspace-task-bar-row" aria-label="任务步骤">
+        <div id="problemDetailTaskStepBar" class="problem-detail-task-step-bar" role="tablist" aria-label="任务步骤 task1–task15"></div>
+      </div>
+      <div class="problem-detail-body" id="problemDetailBody">
+        <aside class="problem-detail-chat">
+          <div class="problem-detail-chat-header">
+            <span>对话</span>
+            <span id="problemDetailChatHeaderLabel" class="problem-detail-chat-header-label" aria-live="polite"></span>
+            <span id="problemDetailChatDiscussionIndicator" class="problem-detail-chat-discussion-indicator" aria-hidden="true" hidden>
+              <span class="problem-detail-chat-discussion-dots"><span></span><span></span><span></span></span>
+              <span class="problem-detail-chat-discussion-label">讨论</span>
+            </span>
+            <button type="button" id="btnProblemDetailAddRequirement" class="btn-problem-detail-add-requirement" aria-label="补充需求">+需求</button>
+          </div>
+          <div id="problemDetailChatMessages" class="problem-detail-chat-body"></div>
+          <div class="problem-detail-chat-input-wrap">
+            <div class="problem-detail-chat-mode-row">
+              <div class="problem-detail-chat-mode-trigger-wrap">
+                <button type="button" id="problemDetailChatModeTrigger" class="problem-detail-chat-mode-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="选择对话模式">
+                  <span class="problem-detail-chat-mode-trigger-icon" id="problemDetailChatModeTriggerIcon" aria-hidden="true">∞</span>
+                  <span class="problem-detail-chat-mode-trigger-text" id="problemDetailChatModeTriggerText">Agent</span>
+                  <span class="problem-detail-chat-mode-trigger-chevron" aria-hidden="true">⌄</span>
+                </button>
+                <div id="problemDetailChatModeDropdown" class="problem-detail-chat-mode-dropdown" role="listbox" aria-hidden="true">
+                  <div class="problem-detail-chat-mode-dropdown-item" id="problemDetailChatModeOptionAgent" role="option" data-mode="agent" tabindex="0" aria-selected="true">
+                    <span class="problem-detail-chat-mode-dropdown-icon">∞</span>
+                    <span class="problem-detail-chat-mode-dropdown-label">Agent</span>
+                    <span class="problem-detail-chat-mode-dropdown-check" aria-hidden="true">✓</span>
+                  </div>
+                  <div class="problem-detail-chat-mode-dropdown-item" id="problemDetailChatModeOptionAsk" role="option" data-mode="ask" tabindex="0" aria-selected="false">
+                    <span class="problem-detail-chat-mode-dropdown-icon problem-detail-chat-mode-icon-ask">💬</span>
+                    <span class="problem-detail-chat-mode-dropdown-label">Ask</span>
+                    <span class="problem-detail-chat-mode-dropdown-check" aria-hidden="true">✓</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="problem-detail-chat-input-row">
+              <textarea id="problemDetailChatInput" class="problem-detail-chat-input" placeholder="输入消息或执行操作…" rows="3"></textarea>
+              <button type="button" id="problemDetailChatSend" class="problem-detail-chat-send" aria-label="发送">↑</button>
+            </div>
+          </div>
+        </aside>
+        <main id="problemDetailContent" class="problem-detail-workspace"></main>
+        <aside id="problemDetailHistoryPanel" class="problem-detail-history-panel" aria-hidden="true">
+          <div class="problem-detail-history-header">
+            <span class="problem-detail-history-title">沟通历史</span>
+            <button type="button" id="btnCloseProblemDetailHistory" class="problem-detail-history-close" aria-label="关闭">×</button>
+          </div>
+          <div id="problemDetailHistoryContent" class="problem-detail-history-body"></div>
+        </aside>
+        <div id="rollbackModalOverlay" class="rollback-modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="rollbackModalTitle">
+          <div class="rollback-modal-dialog">
+            <div class="rollback-modal-header">
+              <h2 id="rollbackModalTitle" class="rollback-modal-title">选择要回退到的任务</h2>
+              <button type="button" id="btnCloseRollbackModal" class="rollback-modal-close" aria-label="关闭">×</button>
+            </div>
+            <p class="rollback-modal-hint">回退后将清空该任务及之后所有任务已产生的数据。</p>
+            <div id="rollbackModalTaskList" class="rollback-modal-task-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="detailView" class="view detail-view" hidden>
+      <div class="detail-body">
+        <aside id="chatPanel" class="chat-panel">
+          <div class="chat-panel-header">
+            <span>互动修改</span>
+            <button type="button" id="btnCloseChat" class="chat-close" aria-label="关闭">×</button>
+          </div>
+          <div id="chatMessages" class="chat-panel-body"></div>
+          <div class="chat-panel-input-wrap">
+            <textarea id="chatInput" class="chat-input" placeholder="你想修改什么？" rows="3"></textarea>
+            <button type="button" id="chatSend" class="chat-send" aria-label="发送">↑</button>
+          </div>
+        </aside>
+        <div class="detail-content">
+          <header class="header">
+            <h1 id="detailTitle">客户详情</h1>
+            <div class="header-actions">
+              <button type="button" id="btnChat" class="btn-chat">互动修改</button>
+              <button type="button" id="btnHistory" class="btn-history">修改历史</button>
+            </div>
+          </header>
+          <main id="detailResult" class="result"></main>
+        </div>
+        <aside id="historyPanel" class="history-panel">
+          <div class="history-panel-header">
+            <span class="history-panel-title">修改历史</span>
+            <button type="button" id="btnCloseHistory" class="history-close" aria-label="关闭">×</button>
+          </div>
+          <div id="historyContent" class="history-panel-body"></div>
+        </aside>
+        <aside id="basicInfoJsonPanel" class="basic-info-json-panel">
+          <div class="basic-info-json-header">
+            <span>基本信息 JSON</span>
+            <button type="button" id="btnCloseBasicInfoJson" class="basic-info-json-close" aria-label="关闭">×</button>
+          </div>
+          <pre id="basicInfoJsonContent" class="basic-info-json-content"></pre>
+          <div class="basic-info-json-footer">
+            <button type="button" id="btnCopyBasicInfoJson" class="btn-copy-basic-info-json">复制</button>
+          </div>
+        </aside>
+        <aside id="bmcJsonPanel" class="bmc-json-panel">
+          <div class="bmc-json-header">
+            <span>商业画布 JSON</span>
+            <button type="button" id="btnCloseBmcJson" class="bmc-json-close" aria-label="关闭">×</button>
+          </div>
+          <pre id="bmcJsonContent" class="bmc-json-content"></pre>
+          <div class="bmc-json-footer">
+            <button type="button" id="btnCopyBmcJson" class="btn-copy-bmc-json">复制</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+    <!-- 详情顶栏「恢复档案」依赖的隐藏文件选择器（原与 legacy 首页同 id，勿改 id） -->
+    <input type="file" id="problemCaseRestoreInput" accept=".json,application/json" hidden aria-hidden="true" />
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js"></script>
+  <!-- task8「流程图绘制」view：主路径 SVG（DOMPurify 清洗）；兼容历史 Mermaid -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="config.js"></script>
+  <script src="config.local.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/object-state-machine-viz.js"></script>
+  <script src="js/auth-runtime.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/storage-http-adapter.js"></script>
+  <script src="js/storage-indexeddb-adapter.js"></script>
+  <script src="js/task1BusinessInsight.js"></script>
+  <script src="js/preliminaryRequirement.js"></script>
+  <script src="js/task2BusinessCanvas.js"></script>
+  <script src="js/task3RequirementLogic.js"></script>
+  <script src="js/valueStream.js"></script>
+  <script src="js/task4ValueStream.js"></script>
+  <script src="js/task5ItStatus.js"></script>
+  <script src="js/task6PainPoint.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/communication-history.js"></script>
+  <script src="js/localItGap.js"></script>
+  <script src="js/rendering.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/rolePermission.js"></script>
+  <script src="js/coreBusinessObject.js"></script>
+  <script type="module" src="js/core/problem-case-api.js"></script>
+  <script type="module" src="js/core/app-state.js"></script>
+  <script type="module" src="js/legacy/app-dom.js"></script>
+  <script type="module" src="js/legacy/problem-detail-renderer.js"></script>
+  <script type="module" src="js/legacy/problem-detail-events.js"></script>
+  <script type="module" src="js/core/problem-detail-chat.js"></script>
+  <script type="module" src="js/core/problem-detail-runtime.js"></script>
+  <script type="module" src="js/core/task2-companion-runtime.js"></script>
+  <script type="module" src="js/core/task8-global-itgap.js"></script>
+  <!-- FE-20260406-03：首页案例键 / session 高亮单一真相源；同步加载，保证早于 defer 的 main.js -->
+  <script src="js/core/problem-follow-shared.js"></script>
+  <script defer src="js/flow-exception-record.js"></script>
+  <script defer src="js/it-design-bpm-flow-render.js"></script>
+  <script defer src="js/itDesignSupplement.js"></script>
+  <script defer src="js/task7-e2e-transaction-flow.js"></script>
+  <script defer src="main.js"></script>
+</body>
+</html>

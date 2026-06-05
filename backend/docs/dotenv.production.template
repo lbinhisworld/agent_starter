@@ -1,0 +1,12 @@
+# 复制为 backend/.env 后填写；勿提交含真实密钥的文件。
+NODE_ENV=production
+HOST=0.0.0.0
+PORT=3000
+DATABASE_URL=mysql://user:password@127.0.0.1:3306/do1_smart_cto
+
+# 使用 `node scripts/generate-deploy-secrets.cjs` 生成后填入
+JWT_SECRET=
+AI_CONFIG_ENCRYPTION_SECRET=
+
+# 可选
+# JWT_EXPIRES_IN=30d

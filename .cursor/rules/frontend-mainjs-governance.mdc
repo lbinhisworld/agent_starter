@@ -1,0 +1,39 @@
+---
+description: frontend/main.js 拆分治理（v10）— 冻结维护态与阶段边界
+globs:
+  - frontend/main.js
+  - frontend/js/core/**
+  - frontend/js/legacy/**
+---
+
+# frontend/main.js 拆分治理（v10）
+
+> 详细口径与表格见：`docs/knowledge/cross-cutting/2026-03-29-frontend-mainjs-governance.md`  
+> 主记录：`docs/plans/2026-03-29-frontend-mainjs-splitting-execution-plan.md`
+
+## 核心规则
+
+1. **`main.js` 冻结维护态**：禁止新增业务逻辑；仅允许 `bootstrap`、`bridge`、`compat`、`hotfix` 等与主记录批次一致的最小改动。
+
+2. **零语义漂移**：禁止变更 UI 与交互顺序；禁止变更 message `type`/`payload`、storage key、API path/method/契约。
+
+3. **覆盖表与反查表登记**：在 `frontend/js/core/`、`frontend/js/legacy/` 等路径新增或调整承载拆出能力的模块时，必须在主记录 **§4 源能力覆盖表** 与 **§5 目标反查表** 中登记对应行；**未登记不得提交**。
+
+4. **`renderProblemDetailContent` 迁出时机**：只允许在 **Phase 3B** 迁出；不得在任何更早 Phase 挪动其宿主。
+
+5. **task8 全局 ITGap**：只允许在 **Phase 4A** 迁出；不得与 **task9** 局部 ITGap 混源或合并实现。
+
+6. **批次验收记录**：每批次合并/提交前，须在主记录 **§7 验收记录** 新增一条对应条目（含批次号、结果与证据指向）。
+
+7. **Phase 5 隔离**：`local` 模式废弃为**独立里程碑**（待新建 `ARCH` 任务），禁止混入 Phase 1–4 的拆分批次。
+
+8. **Phase 4B（演进）**：原 `task10-companion-runtime.js` / `task11-companion-runtime.js` **已删除**；角色权限与核心业务对象相关编排当前在 `frontend/main.js`（内联薄实现 + 历史消息兼容），协议与严格 prompt 仍在 `rolePermission.js` / `coreBusinessObject.js`；新增大块编排仍优先按 §2.1 疏导到 `problem-detail-runtime.js` 等，避免 `main.js` 无序膨胀。
+
+## 疏导优先（减少 `main.js` 触碰）
+
+> 目标：用**默认可改文件**替代「只说不许动 main」。详表与 Review 提示见主记录 `docs/plans/2026-03-29-frontend-mainjs-splitting-execution-plan.md` **§2.1**。
+
+1. **开工前**：先查 §2.1「场景 → 默认落点」表，选定 `problem-detail-runtime.js`、`problem-detail-chat.js`、`preliminaryRequirement.js`、`legacy/problem-detail-*` 等之一，**不要**默认在 `main.js` 里写业务函数体。
+2. **聊天全量渲染**：`renderProblemDetailChatFromStorage` 等仍可能在 `main.js`；新增空态/分支时**优先抽**到 `problem-detail-chat.js` 或 `problem-detail-runtime.js`，`main.js` 只留薄包装。
+3. **状态**：经 `app-state` façade；禁止在 `main.js` 新增长串 `__appState` 业务分支（hotfix 对齐语义除外）。
+4. **大块变更说明**：对 `main.js` 净增约 80 行以上（非格式化）时，在 PR/§7 对应说明采用的疏导落点或 hotfix/compat 理由与后续迁出项。

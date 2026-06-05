@@ -1,0 +1,328 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model ProblemCase {
+  id                            String   @id
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
+  /// online 模式 owner 隔离：只来自后端登录 token
+  ownerSubjectId                String?
+  ownerSubjectType              String?
+  ownerUsernameSnapshot         String?
+  /// 档案编号：同一 owner 下单调递增，删除其他案例不回收不重排（与前端首页/详情「案例编号」同源）
+  archiveNo                     Int
+  customerName                  String
+  customerNeedsOrChallenges     String   @db.Text
+  customerItStatus              String   @db.Text
+  projectTimeRequirement        String   @db.Text
+  currentMajorStage             Int      @default(0)
+  currentItStrategySubstep      Int      @default(0)
+  completedStages               Json?
+  workflowAlignCompletedStages  Json?
+  itGapCompletedStages          Json?
+  completedTaskIds              Json?
+  basicInfo                     Json?
+  bmc                           Json?
+  requirementLogic              Json?
+  valueStream                   Json?
+  e2eFlowWorkspaceSuppressed    Boolean?
+  /// task7：历史全景观压缩 JSON（兼容旧数据）
+  e2eFlowLandscapeJson          Json?
+  /// task7：端到端业务事务流 BPM JSON
+  e2eTransactionFlowJson        Json?
+  /// task7：初步需求业务流程（FVS）完整性补齐事务流 JSON
+  e2eRequirementScenarioSupplementJson Json?
+  globalItGapAnalysisJson       Json?
+  /// task8：IT设计补齐按事务 session（设计 JSON + BPM 绘制），须随单步 PUT 持久化
+  itDesignSupplementSessions    Json?
+  localItGapSessions            Json?
+  localItGapAnalyses            Json?
+  /// task9：流程/待办/决策中心门户设计（BPM 角色视角 JSON）
+  roleTaskCenterPortalDesignJson Json?
+  /// task9：对象状态机构建 — 状态机 JSON（REA/BMC 导向，供 SVG/CSS 渲染）
+  objectStateMachineJson          Json?
+  rolePermissionSessions        Json?
+  coreBusinessObjectSessions    Json?
+  /// task11 修改链路：用户确认的新 system 提示词覆盖（可选）
+  coreBusinessObjectSystemPromptOverride String? @db.LongText
+  /// 设计详情 Task1：每完成一轮「业务背景」分域的客户需求全量同步 +1；同轮其它分域写 token 时沿用该值，供逻辑弹层按需求提炼轮次上色（`DesignDetailTaskToken.requirementSyncGeneration`）
+  designDetailRequirementSyncGen Int @default(0)
+  messages                      ProblemCaseMessage[]
+  /// 设计详情页「任务进展」左栏 UI 快照（与聊天消息指纹对齐后恢复）
+  designDetailProgressWorkspace DesignDetailProgressWorkspace?
+  /// 设计详情页：按任务线步沉淀「概念 → 多形态关键词」列表（见 `DesignDetailTaskToken`）
+  designDetailTaskTokens        DesignDetailTaskToken[]
+  /// 案例级 LLM 调用审计日志（设计详情等任务写入；供独立页面聚合展示）
+  llmLogs                       ProblemCaseLlmLog[]
+  /// 设计详情任务 2–5：推理 sync 后特征修订、反向验证逻辑与 Causality 摘要
+  designDetailInferenceRevisionRecords DesignDetailInferenceRevisionRecord[]
+
+  @@index([ownerSubjectType, ownerSubjectId])
+}
+
+/// 单案例下一次大模型调用的持久化记录（输入/输出全文与 token 统计）
+model ProblemCaseLlmLog {
+  id            String      @id @default(cuid())
+  caseId        String
+  /// 业务任务 id：如 task1、customer_basic、与前端设计线一致
+  taskId        String      @db.VarChar(191)
+  /// 调用目标中文/英文简述：如「设计详情经营信息提炼」
+  callTarget    String      @db.VarChar(512)
+  inputPrompt   String      @db.LongText
+  inputTokens   Int?
+  outputContent String      @db.LongText
+  outputTokens  Int?
+  durationMs    Int
+  model         String?     @db.VarChar(191)
+  createdAt     DateTime    @default(now())
+  case          ProblemCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId, createdAt])
+}
+
+/// 设计详情「任务进展」工作区：单列 JSON，由前端 upsert
+model DesignDetailProgressWorkspace {
+  caseId    String      @id
+  payload   Json
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  case      ProblemCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+}
+
+/// 设计详情页：某案例、某任务线步下一条「概念」及其在推进中出现的多种 surface form（`tokens` 为 JSON 字符串数组）
+model DesignDetailTaskToken {
+  /// 本表主键：新写入为 **`tk_{asciiTask}_{caseCompact}_{6位}`**（应用侧 `allocateNextDesignDetailTaskTokenId`）；历史行可能仍为 **cuid**
+  tokenId   String      @id @default(cuid())
+  /// 案例主键，与 URL `caseId`、`ProblemCase.id` 一致（展示用档案号见 `ProblemCase.archiveNo`）
+  caseId    String
+  /// 任务线步或产品任务名：任务 2 L1 为 **「任务 2：规模与组织模式推理」**（旧库可能仍为 `scale_org_mode_extract` 或更名前中文「任务 2：行业与业务属性推理」，读/删兼容）；**任务 1** 工商与需求提炼 token 统一为 **「任务 1：客户基本情况了解」**（历史库可能仍为 `customer_basic`/`customer_requirement`，读路径兼容）
+  taskId    String      @db.VarChar(191)
+  /// 展示路径：多为单元素（如工商仅中文标题 `["企业名称"]`）；历史或任务 2 可能为 `中文 · 英文` 归一后的中文段
+  tokens    Json
+  /// 写入时的「需求提炼轮次」（与 `ProblemCase.designDetailRequirementSyncGen` 对齐）；0 表示未记录，读图时回退 `createdAt` 启发式
+  requirementSyncGeneration Int @default(0)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  case      ProblemCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  /// 引用本 token 的特征取值节点（比较符 + 取值）
+  featureNodes DesignFeatureNode[]
+
+  @@index([caseId, taskId])
+}
+
+/// 设计详情：某特征的「取值逻辑」节点（绑定 `DesignDetailTaskToken` + 比较符 + 取值）；`featureId` 为表主键，一特征一行
+model DesignFeatureNode {
+  /// 本表主键：新写入为 **`ft_`+12 位十进制**（全局递增）；历史行可能为 **`dd:…`** 或 **cuid**
+  featureId String   @id @db.VarChar(191)
+  /// 引用 `DesignDetailTaskToken.tokenId`
+  tokenId   String
+  /// 与所绑定 `DesignDetailTaskToken` 行同任务的 `tokens` 快照（JSON 字符串数组；DB 列名 `TokenStr`）
+  surfaceTokens Json? @map("TokenStr")
+  /// 比较操作符：规范八值为 **等于 / 不等于 / 小于 / 大于 / 小于等于 / 大于等于 / 包含 / 属于**（写库与 `task-graph` 经 `normalizeDesignDetailFeatureOperator` 归一；兼容历史 `eq`、`!=`、`=`、`CONTAINS` 等别名）
+  operator  String   @db.VarChar(64)
+  /// 与 `operator` 语义对应的取值（标量、数组或结构化 JSON，由大模型与应用约定）
+  value     Json
+  /// 是否确认痛点（任务 2–5 对齐问卷确认后写入；默认否）
+  painPointConfirmed Boolean @default(false)
+  /// 确认痛点的设计线步 id（如 `scale_org_mode_extract`）；重启对应线步时清零
+  painPointConfirmedByLineStepId String? @db.VarChar(64)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tokenRow  DesignDetailTaskToken @relation(fields: [tokenId], references: [tokenId], onDelete: Cascade)
+  /// 以本特征为起点的逻辑边
+  outgoingLogicLinks DesignLogicLink[] @relation("DesignLogicLinkSourceFeature")
+  /// 以本特征为终点的逻辑边
+  incomingLogicLinks DesignLogicLink[] @relation("DesignLogicLinkTargetFeature")
+
+  @@index([tokenId])
+}
+
+/// 逻辑边类型：MySQL ENUM 存值仅 **「正向归纳」「反向验证」**；Prisma 成员名仍为 `FORWARD_INDUCTION` / `REVERSE_VALIDATION`（`@map` 对齐 DB）
+enum DesignLogicLinkKind {
+  FORWARD_INDUCTION @map("正向归纳")
+  REVERSE_VALIDATION @map("反向验证")
+}
+
+/// 设计详情：输入特征 → 输出特征的推导逻辑边（外键引用 `DesignFeatureNode.featureId`）
+model DesignLogicLink {
+  /// 逻辑边主键：新写入为 **`lk_`+12 位十进制**（全局递增）；历史行可能仍为 **cuid**
+  linkId            String   @id @default(cuid())
+  /// 输入特征 id → `DesignFeatureNode.featureId`
+  sourceFeatureId   String   @db.VarChar(191)
+  /// 输出特征 id → `DesignFeatureNode.featureId`
+  targetFeatureId   String   @db.VarChar(191)
+  /// 推理权重，约定取值区间 [0, 1]，越大表示该推导越可靠（由大模型或规则产出）
+  weight            Float
+  /// 从输入特征到输出特征的推导说明（自然语言）
+  logic             String   @db.Text
+  /// 边类型：源端 token **非**任务 1 且目标端为任务 1 时为 **反向验证**（ENUM「反向验证」），否则为 **正向归纳**（「正向归纳」）
+  linkKind          DesignLogicLinkKind @default(FORWARD_INDUCTION)
+  /// 来自 `Token_Validation_Mapping.Consistency`（如 **逻辑一致** / **潜在冲突**）；非该校验链为空
+  validationConsistency String? @db.VarChar(32)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  sourceFeature     DesignFeatureNode @relation("DesignLogicLinkSourceFeature", fields: [sourceFeatureId], references: [featureId], onDelete: Cascade)
+  targetFeature     DesignFeatureNode @relation("DesignLogicLinkTargetFeature", fields: [targetFeatureId], references: [featureId], onDelete: Cascade)
+
+  @@index([sourceFeatureId, targetFeatureId])
+}
+
+/// 推理修订审计行类型：特征取值变更 vs 任务 1 反向验证 Validation_Logic
+enum DesignDetailInferenceRevisionKind {
+  FEATURE_VALUE         @map("特征取值")
+  TOKEN_VALIDATION      @map("反向验证")
+  DIAGNOSTIC_PAIN_POINT @map("诊断痛点")
+}
+
+/// 设计详情：每次 Target_KV sync（含问卷重跑）后的特征取值 diff、TVM Validation_Logic 与 Causality 摘要
+model DesignDetailInferenceRevisionRecord {
+  id                       String   @id @default(cuid())
+  caseId                   String
+  /// 与 `DesignDetailTaskToken.taskId` 落库值一致（如「任务 2：规模与组织模式推理」）
+  taskId                   String   @db.VarChar(191)
+  recordKind               DesignDetailInferenceRevisionKind
+  /// 本任务 `DesignFeatureNode.featureId` 或 TVM 之 `Target_FeatureID`（任务 1）
+  featureId                String   @db.VarChar(191)
+  /// 比对用展示键（如「组织模式｜等于」）
+  fieldLabel               String?  @db.VarChar(512)
+  valueBefore              String?  @db.Text
+  valueAfter               String?  @db.Text
+  validationLogic          String?  @db.Text
+  logicGapReport           String?  @db.Text
+  insightResolutionSummary String?  @db.Text
+  /// 对齐深访问卷全文（`Token_Validation_Mapping` 潜在冲突时生成的问卷 Markdown）
+  alignmentQuestionnaire   String?  @db.LongText
+  /// 用户对上述问卷的回复原文
+  alignmentUserReply       String?  @db.LongText
+  /// `Diagnostic_Pain_Points[].Conflict_Description`（任务 3 等可回退 `Trigger_Features`）
+  conflictDescription      String?  @db.Text
+  /// `Diagnostic_Pain_Points[].Insight_Confirmation`（任务 3 可回退 `Client_Confirmation_Status`）
+  insightConfirmation      String?  @db.Text
+  /// `Diagnostic_Pain_Points[].Root_Cause_Analysis`
+  rootCauseAnalysis        String?  @db.Text
+  /// `Diagnostic_Pain_Points[].Design_Constraint`（任务 5 可回退 `L4_Design_Recommendation`）
+  designConstraint         String?  @db.Text
+  /// 同 caseId+taskId 每次成功 sync 批次 +1
+  syncSeq                  Int      @default(1)
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  case                     ProblemCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId, taskId, syncSeq])
+  @@index([caseId, taskId])
+}
+
+model ProblemCaseMessage {
+  id          String      @id
+  caseId      String
+  taskId      String?
+  taskName    String?
+  role        String?
+  type        String?
+  content     String      @db.LongText
+  payloadJson Json?
+  confirmed   Boolean     @default(false)
+  timestamp   DateTime
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  case        ProblemCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId, timestamp])
+  @@index([caseId, taskId])
+}
+
+model AppSetting {
+  key         String   @id
+  value       String   @db.LongText
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AppUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  // 启用/停用：ENABLED | DISABLED
+  status       String   @default("ENABLED")
+  aiConfig     UserAiConfig?
+  /// 工具经验页「沉淀知识树」JSON 载荷（按用户隔离）
+  toolExpKnowledgeTree ToolExperienceKnowledgeTree?
+  /// 工具经验页左侧对话区状态（消息 + 输入草稿）
+  toolExpChatState ToolExperienceChatState?
+  /// 工具详情页工作画布（工具知识集 JSON，按用户隔离）
+  toolDetailWorkspace ToolDetailWorkspace?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+/// 工具经验知识树：仅存结构化 JSON，由前端合并写入
+model ToolExperienceKnowledgeTree {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  payload   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      AppUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// 工具经验对话区：仅存 JSON，由前端序列化消息列表
+model ToolExperienceChatState {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  payload   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      AppUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// 工具详情工作画布：工具知识集 JSON，由前端合并写入
+model ToolDetailWorkspace {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  payload   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      AppUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuthSession {
+  id               String    @id @default(cuid())
+  userId           String
+  usernameSnapshot String
+  role             String
+  createdAt        DateTime  @default(now())
+  lastActivityAt   DateTime  @default(now())
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  revokedReason    String?
+
+  @@index([userId, revokedAt, expiresAt])
+  @@index([expiresAt])
+}
+
+model UserAiConfig {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  provider         String   @default("deepseek")
+  apiKeyCiphertext String   @db.LongText
+  apiUrl           String
+  model            String
+  verifiedAt       DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  user             AppUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
