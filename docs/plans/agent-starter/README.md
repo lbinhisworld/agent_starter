@@ -195,7 +195,19 @@ agent-starter **继续使用 MySQL + Prisma**，与 Smart CTO 技术栈一致；
 | 后端 PORT | 如 `3002` | 建议 **`3003`** |
 | 前端 API | `config.local.js` → `BACKEND_API_URL` | 指向新端口 |
 
-### 7.2 建库
+### 7.2 一键建库（推荐）
+
+```bash
+# 仓库根目录（macOS / Linux）
+bash scripts/init-agent-starter-db.sh
+
+# 或仅在 backend 目录
+cd backend && npm run db:init
+```
+
+脚本会依次：从 `backend/docs/dotenv.local.template` 生成 `backend/.env`（若缺失）、从 `frontend/config.local.example.js` 生成 `config.local.js`（若缺失）、`CREATE DATABASE agent_starter` 并授权 `smart_cto_app@127.0.0.1`、`prisma db push`、确保管理员 **root/root**（修正 `local-dev-placeholder-hash` 占位哈希）。
+
+### 7.3 手动建库
 
 ```sql
 CREATE DATABASE agent_starter
@@ -203,9 +215,9 @@ CREATE DATABASE agent_starter
   COLLATE utf8mb4_unicode_ci;
 ```
 
-### 7.3 `backend/.env` 示例
+### 7.4 `backend/.env` 示例
 
-参考 `backend/docs/dotenv.production.template`：
+参考 `backend/docs/dotenv.local.template`（本地）或 `backend/docs/dotenv.production.template`（生产）：
 
 ```env
 NODE_ENV=development
@@ -225,7 +237,7 @@ cd backend
 node scripts/generate-deploy-secrets.cjs
 ```
 
-### 7.4 同步表结构
+### 7.5 同步表结构
 
 ```bash
 cd backend
@@ -237,7 +249,7 @@ npx prisma db push          # 本地开发
 
 表结构来自复制过来的 `backend/prisma/schema.prisma`（含 `ProblemCase`、`DesignDetailTaskToken`、`DesignFeatureNode`、`DesignLogicLink` 等）。**仅写入新库，不影响 Smart CTO 库。**
 
-### 7.5 启动后端
+### 7.6 启动后端
 
 与 Smart CTO 相同，使用统一脚本（勿拆步省略 db push / build）：
 
@@ -251,7 +263,7 @@ powershell -File backend/scripts/start-local-backend.ps1
 
 说明见 `backend/scripts/README-local.md`。
 
-### 7.6 前端指向新后端
+### 7.7 前端指向新后端
 
 `frontend/config.local.js`（通常 gitignore，需本地新建）：
 
@@ -262,7 +274,7 @@ window.APP_CONFIG = Object.assign(window.APP_CONFIG || {}, {
 });
 ```
 
-### 7.7 验证
+### 7.8 验证
 
 ```bash
 curl http://127.0.0.1:3003/health

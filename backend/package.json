@@ -15,7 +15,8 @@
     "secrets:generate": "node scripts/generate-deploy-secrets.cjs",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "db:init": "node scripts/init-agent-starter-local-db.cjs"
   },
   "keywords": [],
   "author": "",

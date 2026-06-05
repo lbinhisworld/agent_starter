@@ -41,5 +41,7 @@
 | `backend/scripts/_runtime-verify-owner-isolation.cjs` | local-only：owner 隔离运行时最小复验（user 404、admin 全量、root 回填校验） |
 | `backend/scripts/_runtime-verify-tool-experience.cjs` | local-only：工具经验 `GET|PUT /api/me/tool-experience/knowledge-tree` 与 `chat-state` 复验（真实库需 `TOOL_EXP_VERIFY_BEARER`） |
 | `backend/scripts/cleanup-auth-sessions.cjs` | 手动清理过期或已撤销 AuthSession 会话 |
+| `backend/scripts/init-agent-starter-local-db.cjs` | agent-starter 一键建库：CREATE DATABASE、`prisma db push`、root/root 管理员（修正占位哈希） |
+| `backend/docs/dotenv.local.template` | 本地 `backend/.env` 模板（勿提交真实 `.env`） |
 
 **触发器**: 一旦本文件夹增删文件或架构逻辑调整，请立即重写此文档。

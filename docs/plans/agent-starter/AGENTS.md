@@ -22,5 +22,9 @@
 | ---- | ---- |
 | `docs/plans/agent-starter/README.md` | agent-starter 前期设计说明（目标、架构、复制方式、数据库、裁剪清单、验收） |
 | `docs/plans/agent-starter/AGENTS.md` | 本目录索引 |
+| `scripts/init-agent-starter-db.sh` | 本地一键建库入口（调用 `backend/scripts/init-agent-starter-local-db.cjs`） |
+| `backend/scripts/init-agent-starter-local-db.cjs` | 建库、Prisma push、root/root 管理员幂等初始化 |
+| `backend/docs/dotenv.local.template` | 本地 `backend/.env` 模板（库名 `agent_starter`、PORT `3003`） |
+| `frontend/config.local.example.js` | 本地 `config.local.js` 模板（`BACKEND_API_URL` → 3003） |
 
 **触发器**: 一旦本文件夹增删文件或 agent-starter 边界/阶段变化，请立即重写本文件。

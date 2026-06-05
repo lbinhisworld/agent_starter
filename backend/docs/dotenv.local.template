@@ -1,0 +1,9 @@
+# 本地开发：复制为 backend/.env（勿提交 Git）
+# 格式：mysql://用户:密码@127.0.0.1:3306/数据库名（密码中的特殊字符需 URL 编码）
+DATABASE_URL="mysql://smart_cto_app:@127.0.0.1:3306/agent_starter"
+
+# 与 frontend/config.local.js 中 BACKEND_API_URL 端口一致（smart-cto 用 3002，agent-starter 用 3003）
+PORT=3003
+HOST=127.0.0.1
+
+# 可选：JWT_SECRET、JWT_EXPIRES_IN（代码默认分别为 dev_jwt_secret、8h）
