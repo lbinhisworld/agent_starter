@@ -26,7 +26,23 @@
 
 ---
 
-## 1) 前端快速启动（必做）
+## 1) 一键启动前后端（推荐）
+
+仓库根目录 `dev.mjs` 一条命令同时启动前端（Vite :6677）和后端（ts-node-dev :6688）：
+
+```bash
+node dev.mjs              # 同时启动前后端
+node dev.mjs --skip-db    # 跳过 prisma（快速重启）
+```
+
+启动后访问 **http://localhost:6677/**（未登录会跳 login.html，账号 root/root）。
+
+> 首次运行前需先安装依赖：`cd backend && npm install` 和 `cd frontend-vue && npm install`，
+> 并配置 `backend/.env`（`cp backend/.env.example backend/.env`，填 DATABASE_URL）。
+
+---
+
+## 2) 前端快速启动（单独）
 
 前端源码在 `frontend-vue/`（Vue 3 + Vite，唯一自包含工程），生产构建产物输出到 `frontend-vue/dist/`，发布包 `frontend-vue/release/`（由 `npm run build:dist` 生成）。
 
