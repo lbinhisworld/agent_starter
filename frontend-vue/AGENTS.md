@@ -4,6 +4,8 @@
 
 Vue 登录页、管理端与统一 API 客户端，与 `frontend` 主站共享同源 `localStorage` 鉴权键。
 
+> **工程定位（2026-06-16 起）**：本目录 `frontend-vue/` 是**唯一需要开发的源码工程**（Vue 3 + Vite）。`frontend/` 仅承载**运行时共享静态资源**（如 `js/api.js`、`js/auth-runtime.js`、`js/core/problem-case-api.js`——后者被本工程的 `src/home/main.ts` 与 `src/design-detail/main.ts` 打包引用，**必须保留**）与构建产物 `vue-auth-assets/`（已 gitignore，由 `npm run build` 生成）。纯原生页 `index.html`（企业信息/商业画布查询）与 `report.html`（售前分析报告）及其独占资源（含 `main.js`）已移除，入口页现为 `home.html`。
+
 ## 职责
 
 1. 登录、个人模型配置与管理员用户管理 UI。

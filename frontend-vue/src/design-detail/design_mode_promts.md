@@ -48,7 +48,7 @@
 
 ## 1. 范围与原则
 
-- **范围**：仅覆盖「设计详情页」简洁模式及其与同源 `problem_detail_chats` / 案例 bundle 的衔接；主站详情页（`index.html` + `main.js`）既有提示词仍以 `frontend/PROMPTS.md` 及 `frontend/js/task*.js` 为准，迁入本文件时在此**逐节替换**并删除旧处重复。
+- **范围**：仅覆盖「设计详情页」简洁模式及其与同源 `problem_detail_chats` / 案例 bundle 的衔接；原主站详情页（`index.html` + `main.js`）已于 2026-06-16 移除，相关提示词以本文件及保留下来的 `frontend/PROMPTS.md`、`frontend/js/task*.js` 资源为准。
 - **原则**：提示词变更须同步本文件 + 对应源码常量 +（若存在）`frontend/PROMPTS.md` 交叉索引行。
 
 ---

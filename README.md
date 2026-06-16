@@ -6,10 +6,13 @@
 
 ---
 
-## 目录结构（你只需要记住这两个）
+## 目录结构（你只需要记住这几个）
 
-- `smart_cto/`：纯静态前端（`index.html + main.js + js/*`）
-- `backend/`：Node 后端（Express + Prisma）
+- `frontend-vue/`：**唯一需要开发的源码工程**（Vue 3 + Vite）。入口页是 `home.html`，其余 Vue 页面见 `frontend-vue/AGENTS.md`。
+- `frontend/`：**运行时静态资源宿主**——承载被 `home.html` / `design-detail.html` 等运行时引用的共享脚本（`js/api.js`、`js/auth-runtime.js`、`js/core/problem-case-api.js` 等）与构建产物 `vue-auth-assets/`（已 gitignore，由 `npm run build` 生成）。
+- `backend/`：Node 后端（Express + Prisma）。
+
+> 已移除的纯原生页：`index.html`（企业信息/商业画布查询）与 `report.html`（售前分析报告）及其独占资源（含 `main.js`）已于 2026-06-16 删除。入口页现为 `home.html`。
 
 `docs/`：文档（部署见 `docs/deploy/`）。**前端阶段与沟通历史 UI**：见 `frontend/数字化问题跟进阶段设计.md`、`frontend/对话模型管理.md`（过程日志标签统一字号等见前者 §0.6、后者 §4.5）。
 
@@ -25,14 +28,24 @@
 
 ## 1) 前端快速启动（必做）
 
-前端是静态站点，建议用本地静态服务器启动（不要直接双击 `index.html`）。
+前端源码在 `frontend-vue/`（Vue 3 + Vite），生产构建产物输出到 `frontend/vue-auth-assets/`，由 `frontend/home.html` 等入口引用。
+
+本地开发：
 
 ```bash
-cd smart_cto
-npx serve .
+cd frontend-vue
+npm install
+npm run dev
 ```
 
-打开终端提示的地址即可。
+联调打开 `http://localhost:5173/home.html`（详见 `frontend-vue/AGENTS.md`）。
+
+生产/预览构建：
+
+```bash
+cd frontend-vue
+npm run build   # 产物写入 frontend/vue-auth-assets/
+```
 
 ---
 
