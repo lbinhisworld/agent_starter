@@ -664,3 +664,100 @@ const goToolExperience = () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+:global(body) {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.app {
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  --border: #dbe3ef;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --accent: #2563eb;
+  --accent-dim: #dbeafe;
+  --success: #0f766e;
+  --error: #dc2626;
+}
+
+.btn-nav,
+.btn-tool-suite,
+.btn-tool-experience,
+.btn-problem-case-import {
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.btn-nav:hover,
+.btn-tool-suite:hover,
+.btn-tool-experience:hover,
+.btn-problem-case-import:hover {
+  color: var(--accent);
+  background: #eff6ff;
+  border-color: var(--accent);
+}
+
+.btn-nav-active,
+.btn-nav-active:hover {
+  color: var(--accent);
+  background: #eff6ff;
+}
+
+.btn-logout {
+  color: var(--error);
+  border-color: #fecaca;
+}
+
+.btn-logout:hover {
+  color: var(--error);
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.home-intake-title-brand,
+.btn-parse,
+.btn-problem-follow-start {
+  background: var(--accent);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.24);
+}
+
+.home-intake-input-wrap,
+.problem-follow-card {
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.home-intake-input-wrap:focus-within {
+  box-shadow:
+    0 0 0 1px rgba(37, 99, 235, 0.16),
+    0 8px 18px rgba(37, 99, 235, 0.08);
+}
+
+.problem-follow-card:hover {
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+}
+
+.problem-follow-card-accent-a {
+  background: linear-gradient(90deg, #2563eb, #60a5fa);
+}
+
+.problem-follow-card-accent-b {
+  background: linear-gradient(90deg, #0f766e, #5eead4);
+}
+
+.problem-follow-card-task-badge {
+  background: var(--accent);
+}
+
+.problem-follow-card-actions .btn-problem-follow-design {
+  background: #eff6ff;
+}
+
+.problem-follow-card-actions .btn-problem-follow-design:hover {
+  color: #fff;
+  background: var(--accent);
+}
+</style>
