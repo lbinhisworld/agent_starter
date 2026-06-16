@@ -220,10 +220,10 @@ server {
     server_name _;
 
     root $DEPLOY_DIR/frontend;
-    index index.html;
+    index home.html;
 
     location / {
-        try_files \$uri \$uri/ /index.html;
+        try_files \$uri \$uri/ /home.html;
     }
 
     location /api/ {
