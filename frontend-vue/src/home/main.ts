@@ -5,7 +5,7 @@
  *
  * [PROTOCOL]: 变更首页影子页行为时同步 `frontend-vue/AGENTS.md` 与 `docs/agents/frontend/03-active-tasks.md` 相关条目；挂载根 `#home-app`
  */
-import '../../../frontend/js/core/problem-case-api.js';
+import '../legacy/core/problem-case-api.js';
 import { createApp } from 'vue';
 import HomePage from './HomePage.vue';
 

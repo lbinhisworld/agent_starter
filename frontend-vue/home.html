@@ -4,28 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>首页 - Smart CTO</title>
-  <!-- 开发/预览：浏览器以站点根解析为 /frontend/*（由 vite 挂载 sibling `frontend/`）；构建后由 closeBundle 归一为同级资源名 -->
-  <link rel="stylesheet" href="/frontend/styles.css" />
+  <!-- 资源在 public/static/，dev 经 publicDir 解析、build 复制到 outDir；closeBundle 归一为同级资源名 -->
+  <link rel="stylesheet" href="static/styles.css" />
 </head>
 <body>
   <div id="home-app"></div>
 
-  <!-- 与 frontend/home.html 同源的配置与存储链；不加载 main.js（避免与影子页双初始化） -->
+  <!-- 同源配置与存储链；不加载 main.js（避免与影子页双初始化） -->
   <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js"></script>
-  <script src="/frontend/config.js"></script>
-  <script src="/frontend/config.local.js"></script>
-  <script src="/frontend/js/config.js"></script>
-  <script src="/frontend/js/utils.js"></script>
-  <script src="/frontend/js/auth-runtime.js"></script>
-  <script src="/frontend/js/api.js"></script>
-  <script src="/frontend/js/storage-http-adapter.js"></script>
-  <script src="/frontend/js/storage-indexeddb-adapter.js"></script>
-  <script src="/frontend/js/task1BusinessInsight.js"></script>
-  <script src="/frontend/js/preliminaryRequirement.js"></script>
-  <script src="/frontend/js/storage.js"></script>
+  <script src="static/config.js"></script>
+  <script src="static/config.local.js"></script>
+  <script src="static/js/config.js"></script>
+  <script src="static/js/utils.js"></script>
+  <script src="static/js/auth-runtime.js"></script>
+  <script src="static/js/api.js"></script>
+  <script src="static/js/storage-http-adapter.js"></script>
+  <script src="static/js/storage-indexeddb-adapter.js"></script>
+  <script src="static/js/task1BusinessInsight.js"></script>
+  <script src="static/js/preliminaryRequirement.js"></script>
+  <script src="static/js/storage.js"></script>
   <!-- problem-case-api 由 src/home/main.ts 打包进 vue-auth-assets/home.js -->
-  <script src="/frontend/js/core/problem-follow-shared.js"></script>
+  <script src="static/js/core/problem-follow-shared.js"></script>
   <script type="module" src="./src/home/main.ts"></script>
 </body>
 </html>

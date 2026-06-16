@@ -1,11 +1,12 @@
 {
   "name": "frontend-vue",
   "version": "1.0.0",
-  "description": "",
+  "description": "Smart CTO 唯一自包含前端工程（Vue 3 + Vite）",
   "main": "index.js",
   "scripts": {
     "dev": "vite --port 5173 --strictPort",
     "build": "vite build",
+    "build:dist": "vite build && node scripts/build-dist.mjs",
     "preview": "vite preview --port 5173 --strictPort"
   },
   "keywords": [],
@@ -18,10 +19,12 @@
     "vue-router": "^5.0.3"
   },
   "devDependencies": {
+    "@babel/generator": "^7.28.0",
+    "@babel/parser": "^7.28.0",
     "@types/node": "^25.5.0",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vue/compiler-sfc": "^3.5.30",
-    "serve-static": "^1.16.2",
+    "lightningcss": "^1.30.0",
     "terser": "^5.46.1",
     "typescript": "^5.9.3",
     "vite": "^8.0.0"

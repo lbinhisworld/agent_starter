@@ -1,13 +1,13 @@
 # Business Product Agent · 活跃任务台账
 
-> **轻量索引**：只保留仍活跃或未关账的 BP 任务；已关闭过程不在此展开。最近治理：`BP-20260325-07`（product 知识卡正文迁移 · 第一批）。
+> **轻量索引**：只保留仍活跃或未关账的 BP 任务；已关闭过程不在此展开。
 
 ## 治理与文档
 
 | 编号 | 状态 | 标题 | 下一步（摘要） |
 | ---- | ---- | ---- | -------------- |
-| BP-20260325-06 | 已完成 | business-product 文档拆分第三阶段 | 分层目录已落地；专题进知识库 |
-| BP-20260325-07 | 已完成 | product 知识卡正文迁移（第一批） | task11、任务级修改/Skills 两篇已为正文主源；`business-product-agent.md` §14 已索引化 |
+| BP-20260325-06 | 已完成 | business-product 文档拆分第三阶段 | 分层目录已落地 |
+| BP-20260325-07 | 已废弃 | ~~product 知识卡正文迁移~~ | 知识卡机制已整体废弃（2026-06-16），`docs/knowledge/` 已删除，专题内容回归 `business-product-agent.md` §14 |
 
 ## 产品类跟进
 
@@ -21,7 +21,7 @@
 以下已完成或方案已交付执行侧，详情见 `business-product-agent.md` 历史区或派工台账：
 
 - `BP-20260322-01` 角色初始化与产品基线  
-- `BP-20260323-02` task11 设计演进（正文见 `docs/knowledge/product/2026-03-25-task11-core-business-object-boundary.md`）  
-- `BP-20260323-03` 任务级修改机制（正文见 `docs/knowledge/product/2026-03-25-task-modification-skills-and-ui-surface.md`）  
-- `BP-20260323-04` 首页 Skills 与任务 Skills 数据库（同上第二篇）  
-- `BP-20260323-05` 沟通历史 skill tab（同上第二篇）  
+- `BP-20260323-02` task11 设计演进  
+- `BP-20260323-03` 任务级修改机制  
+- `BP-20260323-04` 首页 Skills 与任务 Skills 数据库  
+- `BP-20260323-05` 沟通历史 skill tab  

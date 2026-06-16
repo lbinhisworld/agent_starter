@@ -13,7 +13,7 @@
 - 涉及：`frontend` / `frontend-vue`
 - 一句话目标：
 - 阻塞：
-- 详述与证据：→ `frontend-agent.md` 对应节 **或** `docs/knowledge/frontend/` 知识卡链接
+- 详述与证据：→ `frontend-agent.md` 对应节
 
 ---
 
@@ -123,8 +123,8 @@
 - 状态：`已完成`
 - 涉及：`frontend`、`docs`
 - 一句话目标：建立 `frontend/main.js` 拆分的唯一执行主记录，完成阶段总览、源能力覆盖表、目标反查表，并将 `ARCH/FE` 台账回链到该主记录。
-- 阻塞：无（治理知识卡与 `.cursor` 规则已落库，Phase 0 已关账）。
-- 详述与证据：→ `docs/plans/2026-03-29-frontend-mainjs-splitting-execution-plan.md` · 知识卡 `docs/knowledge/cross-cutting/2026-03-29-frontend-mainjs-governance.md` · 规则 `.cursor/rules/frontend-mainjs-governance.mdc`
+- 阻塞：无（治理 `.cursor` 规则已落库，Phase 0 已关账）。
+- 详述与证据：→ `docs/plans/2026-03-29-frontend-mainjs-splitting-execution-plan.md` · 规则 `.cursor/rules/frontend-mainjs-governance.mdc`
 
 - 任务编号：`FE-20260329-08`
 - 日期：2026-03-29

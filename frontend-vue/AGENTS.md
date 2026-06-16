@@ -4,7 +4,7 @@
 
 Vue 登录页、管理端与统一 API 客户端，与 `frontend` 主站共享同源 `localStorage` 鉴权键。
 
-> **工程定位（2026-06-16 起）**：本目录 `frontend-vue/` 是**唯一需要开发的源码工程**（Vue 3 + Vite）。`frontend/` 仅承载**运行时共享静态资源**（如 `js/api.js`、`js/auth-runtime.js`、`js/core/problem-case-api.js`——后者被本工程的 `src/home/main.ts` 与 `src/design-detail/main.ts` 打包引用，**必须保留**）与构建产物 `vue-auth-assets/`（已 gitignore，由 `npm run build` 生成）。纯原生页 `index.html`（企业信息/商业画布查询）与 `report.html`（售前分析报告）及其独占资源（含 `main.js`）已移除，入口页现为 `home.html`。
+> **工程定位（2026-06-16 起，2026-06-16 独立化重构）**：本目录 `frontend-vue/` 是**唯一自包含前端工程**（Vue 3 + Vite），不再依赖 sibling `frontend/`。原 `frontend/js/` 的共享资源已全数迁入：被 import 的 legacy JS（`designDetail*SystemPrompt.js`、`task1BusinessInsight.js`、`core/problem-case-api.js` 等 23 个）在 `src/legacy/`；运行时 `<script src>` 加载的（`api.js`、`auth-runtime.js`、`utils.js`、`storage*.js` 等）在 `public/static/`。vite 产物输出到 `dist/`，`npm run build:dist` 再生成发布包 `release/`。原 `frontend/` 目录已废弃（改名 `frontend.bak/` 暂留备份）。
 
 ## 职责
 
@@ -16,24 +16,25 @@ Vue 登录页、管理端与统一 API 客户端，与 `frontend` 主站共享�
 
 - **多页入口 HTML**：`login.html` / `admin.html` / `home.html` / `model-config.html` / `tool-experience.html` / `tool-detail.html` / `design-detail.html` / `design-llm-log.html` 中 Vue 入口须使用 **`./src/<feature>/main.ts`**（相对当前 HTML），勿使用 **`/src/...`**；否则页面 URL 带子路径（如 `/frontend-vue/login.html`）时浏览器会向站点根请求 `/src/...` 导致模块 404 与白屏。
 - 鉴权键名须与 `auth-runtime` 一致：`smart_cto_auth_token`、`smart_cto_auth_role`、`smart_cto_auth_expires_at`。
+- **共享静态资源 `public/static/`**：`login.html` / `admin.html` 的 `<link>`/`<script>` 用**裸路径 `static/*`**（如 `static/styles.css`、`static/config.js`、`static/config.local.js`、`static/favicon.ico`）引用——dev 下经 Vite `publicDir` 解析、build 下复制到 outDir。这批文件由 `frontend/` 同名源文件**物理拷贝**而来（与 `home.html` 等使用的 `/frontend/*` 中间件挂载是两套并列机制）。注意 `config.local.js` 为本地 gitignored 覆盖配置，源端 `frontend/config.local.js` 改动需**手动重拷**到 `public/static/`。
 - **正式首页（`src/home/`）**：须遵守 `docs/design/home-shadow-migration-map.md` **「组件拆分冻结」**、**「验收前收口」**与 **「边界再收紧」**（后端契约 no-op、阶段文案仅 legacy 推导、不在 `index.html` 复活 legacy 壳/不借组件化做语义重构）。`HomePage.vue` 为整页主实现，**不主动**拆 `ProblemFollowCard.vue` 一类展示子组件；允许继续抽离的**仅限** helper、`caseKey`/highlight、API、import-export 工具，及**必要时** DOM 零漂移的极薄展示子组件。触碰 `frontend/js/auth-runtime.js`、`frontend/main.js` 时，回报须单列 bridge/fallback 与门禁/兼容所必需（**FE-20260406-04A** 起不再使用 `home-follow-card-bridge.js`）。每轮回报须含：**工程拆分清单**、各拆分**是否改 DOM**、**命名调整清单**（若有）、**登录/错误凭证验证结果**、固定句「**本拆分为工程层拆分，非语义层重构**」——详见该文档 **「回报模板」**与 **「验收证据」**。
 
 ### 构建产物输出策略（正式协作规则 · `FE-20260326-01`）
 
-本目录执行生产构建时，产物输出到上级仓库的 **`frontend/vue-auth-assets/`**（非本目录内堆叠的多套 hash 文件）。
+本目录执行生产构建时，产物输出到 **`dist/vue-auth-assets/`**（非本目录内堆叠的多套 hash 文件），`npm run build:dist` 再生成发布包 `release/`。
 
 | 项 | 说明 |
 | ---- | ---- |
-| **输出位置** | `frontend/vue-auth-assets/`，供主站 `login.html` / `admin.html` / **`home.html`** / **`model-config.html`** / **`tool-experience.html`** / **`tool-detail.html`** / **`design-detail.html`** / **`design-llm-log.html`** 等同源入口引用 |
+| **输出位置** | `dist/vue-auth-assets/`（vite build），`release/`（build:dist 发布包），供各入口同源引用 |
 | **固定文件名** | 构建使用 **固定资源文件名** 覆盖输出，避免历史 hash 文件在目录内累积、难以审阅与合并 |
 | **构建前清理** | 构建开始前 **清空** `frontend/vue-auth-assets/`，再写入当前次构建的完整产物集，保证目录与本次源码一一对应 |
 | **`version.txt`** | 构建结束后写入版本令牌；入口运行时读取该文件，为脚本/样式 URL 拼接 **`?v=...`**，在固定文件名下仍能通过 query 破浏览器强缓存 |
 
-**多人协作（硬规则）**：若 Git 或其它流程导致 **`frontend/vue-auth-assets/` 冲突**，**禁止对产物做手工 merge 或挑文件拼凑**；应 **先合并 `frontend-vue` 源码与配置**，再 **统一重新构建** 一次，以构建生成的整包产物为准并提交。详见 `docs/agents/frontend/02-playbooks.md` **§8. frontend-vue 构建产物协作规则**。
+**多人协作（硬规则）**：若 Git 或其它流程导致 **`dist/vue-auth-assets/` 冲突**，**禁止对产物做手工 merge 或挑文件拼凑**；应 **先合并 `frontend-vue` 源码与配置**，再 **统一重新构建** 一次，以构建生成的整包产物为准并提交。
 
 **节奏**：平时以改 **`src/...`** 为主；**收口 / 发版前** 统一构建并提交 `frontend/vue-auth-assets/`（含 `version.txt`），与主站入口引用保持一致。
 
-**FE-20260429-dev-frontend**：`npm run dev` 下 `home.html` / `tool-experience.html` / `design-detail.html` / `design-llm-log.html` 壳显式引用 **`/frontend/*`**；`vite.config.ts` 用 **`serve-static`** 以 **`server.middlewares.use('/frontend', …)`** 映射到仓库 **`frontend/`**，缺失的 **`config.local.js`** 返回 200 空脚本（该文件常 gitignore）；`server.fs.allow` 含仓库根与 `frontend/`；Vue 入口仍为 **`./src/.../main.ts`** 由 Vite 转译，勿用静态服务直出 `.ts`（会触发错误 MIME）。联调请打开 **`http://localhost:5173/home.html`**（或同端口其它入口 HTML）；生产仍以 **`npm run build`** 后 **`frontend/home.html`**（`vue-auth-assets/home.js`）为准。
+**FE-20260616-independent**：`frontend-vue/` 已彻底独立，不再依赖 sibling `frontend/`（已废弃改名）。共享资源分布：被 import 的 legacy JS 在 `src/legacy/`（`design-detail/main.ts`、`home/main.ts` import `../legacy/...`），运行时 `<script>` 加载的在 `public/static/`（各 HTML 用 `static/*` 裸路径，dev 经 publicDir、build 复制到 `dist/static/`）。`vite.config.ts` 已删除 `dev-serve-sibling-frontend` 中间件与 `serve-static` 依赖；`outDir` 为 `dist/`，`emptyOutDir: true`。`src/design-detail/designDetailLegacyScripts.ts` 的 task1 fallback `<script>` 指向 `static/js/task1BusinessInsight.js`。联调请打开 **`http://localhost:5173/home.html`**（或同端口其它入口 HTML）；生产以 **`npm run build`** 后 **`dist/home.html`**（`vue-auth-assets/home.js`）或 `npm run build:dist` 后 `release/` 为准。
 
 ## 成员清单
 
@@ -44,6 +45,7 @@ Vue 登录页、管理端与统一 API 客户端，与 `frontend` 主站共享�
 | `src/stores/auth.ts` | Pinia 鉴权状态：从 localStorage 初始化、登录写入 token/role/username；退出登录清理 `smart_cto_auth_token`/`smart_cto_auth_role`/`smart_cto_auth_username`/`smart_cto_auth_expires_at`，避免跨账号残留 |
 | `vite.config.ts` | 构建前将 `../frontend/js/auth-runtime.js` 复制到 `public/js`，并在构建前清理 `../frontend/vue-auth-assets/`；多入口含 `login` / `admin` / **`home`** / **`model-config`** / **`tool-experience`** / **`design-detail`** / **`design-llm-log`**；产物固定命名输出到 `frontend/vue-auth-assets/`（含 `home.js` / `home.css` / `model-config.js` / `model-config.css` / **`tool-experience.js` / `tool-experience.css`** / **`design-detail.js` / `design-detail.css`** / **`design-llm-log.js` / `design-llm-log.css`**），构建后写入 `version.txt`（上述产物哈希参与），并为 **`frontend/design-detail.html`** / **`frontend/design-llm-log.html`** 内 **`./vue-auth-assets/*`** 注入 **`?v=<hash>`** 以防浏览器强缓存旧 bundle；`closeBundle` 将打包后的 `frontend/home.html` 等入口里 **`../frontend/`** 与 **`/frontend/`** 资源引用归一为同目录 `config.js` / `js/*` 口径；`npm run dev` 下用 **`serve-static`** 挂载 **`/frontend`** 到仓库 `frontend/`（含可选 `config.local.js` 空响应）；**`inject-vite-home-guard`** 向 `home.html` 注入 `./vite-home-guard.js`（避免误用静态站打开源码入口时无提示） |
 | `public/vite-home-guard.js` | 首页专用：探测 `/frontend/config.js` 404 与 `main.ts` 非 JS MIME，提示使用 `npm run dev` 或 `frontend/home.html`；构建复制到 `frontend/vite-home-guard.js` |
+| `public/static/` | `login.html` / `admin.html` 共享静态资源（`styles.css` / `config.js` / `config.local.js` / `favicon.ico`），由 `frontend/` 同名源文件物理拷贝；`config.local.js` 为本地 gitignored 覆盖配置 |
 | `model-config.html` | 个人模型配置 HTML 壳（源码在 `frontend-vue/`）：与主站同源 `config.js`、`js/auth-runtime.js`；不展示业务导航，供首次登录门禁与后续手动访问共用 |
 | `src/login/AGENTS.md` | `src/login/` 子目录索引：登录表单与 online 首跳门禁口径 |
 | `src/model-config/main.ts` | 挂载 `ModelConfigPage` 到 `#app` |

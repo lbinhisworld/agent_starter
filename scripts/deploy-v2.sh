@@ -186,6 +186,13 @@ npx prisma generate
 npx prisma db push
 npm run build
 
+# 前端构建：frontend-vue 是唯一工程，产物到 frontend-vue/release/
+cd "$DEPLOY_DIR/frontend-vue"
+npm ci
+npm run build
+node scripts/build-dist.mjs
+cd "$DEPLOY_DIR/backend"
+
 # ---- 5. PM2 启动 ----
 echo ""
 echo "[5/6] PM2 启动后端..."
@@ -219,7 +226,7 @@ server {
     listen 80;
     server_name _;
 
-    root $DEPLOY_DIR/frontend;
+    root $DEPLOY_DIR/frontend-vue/release;
     index home.html;
 
     location / {
@@ -242,7 +249,7 @@ server {
 EOF
 
 # 写入前端配置
-cat > "$DEPLOY_DIR/frontend/config.local.js" <<'EOFJS'
+cat > "$DEPLOY_DIR/frontend-vue/release/static/config.local.js" <<'EOFJS'
 window.APP_CONFIG = window.APP_CONFIG || {};
 window.APP_CONFIG.MODE = 'online';
 window.APP_CONFIG.BACKEND_API_URL = '/api';
@@ -290,5 +297,5 @@ echo "  更新:   cd $DEPLOY_DIR && git pull && cd backend && npm ci && npm run 
 echo ""
 echo "数据库: mysql -u $DB_USER -p -h 127.0.0.1 $DB_NAME"
 echo "后端配置: $DEPLOY_DIR/backend/.env"
-echo "前端配置: $DEPLOY_DIR/frontend/config.local.js"
+echo "前端配置: $DEPLOY_DIR/frontend-vue/release/static/config.local.js"
 echo "Nginx: $NGINX_CONF"

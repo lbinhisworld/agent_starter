@@ -9,6 +9,11 @@ lerna-debug.log*
 
 node_modules
 dist
+release
+codegraph
+
+# 本地覆盖配置（不入库）：含 frontend/config.local.js 与其 frontend-vue 副本
+config.local.js
 
 # 本地脚本状态与日志（backend/scripts 标准启动）
 backend/.local/

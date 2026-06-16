@@ -1,6 +1,6 @@
 # Business Product Agent · Playbooks
 
-> 标准输出、裁决框架、验收口径与可复制提示词。专题长篇见 `docs/knowledge/product/`。任务号：`BP-20260325-06`。
+> 标准输出、裁决框架、验收口径与可复制提示词。任务号：`BP-20260325-06`。
 
 ## 需求裁决框架（六问）
 
@@ -63,14 +63,3 @@
 - 若需求会打断当前主链路闭环，必须明确范围风险，不默认放行。
 - 若需求更适合延后到报告导出、行业模板或商业化验证阶段，须说明原因。
 ```
-
-## 专题知识卡索引（正文主源 · BP-20260325-07 起）
-
-以下两篇为 **product 事实主源**；`business-product-agent.md` §14 已改为索引+摘要，勿双份维护正文。
-
-| 主题 | 知识卡 |
-| ---- | ------ |
-| task11：边界、两步法、V3.3、主对象/子表判断、task11 专项重推演 | `docs/knowledge/product/2026-03-25-task11-core-business-object-boundary.md` |
-| 任务级修改、Skills 库、沟通历史 skill tab | `docs/knowledge/product/2026-03-25-task-modification-skills-and-ui-surface.md` |
-| 在线版售前分析报告 v1 边界 | **候选**：待单独起卡 |
-| 用户从小白到大师成长计划（内容序列） | **候选**：可落 `product/` 或教程集（与 BP-20260323-01 对齐） |

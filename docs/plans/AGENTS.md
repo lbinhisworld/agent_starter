@@ -12,7 +12,7 @@
 
 ## 约束
 
-- 本目录文档优先承载**计划、阶段、依赖、进度、验收**，不替代 `docs/knowledge/` 的知识卡沉淀。
+- 本目录文档优先承载**计划、阶段、依赖、进度、验收**。
 - `docs/agents/*/03-active-tasks.md` 只保留轻量索引、状态与链接；长篇执行过程统一链接到本目录主记录。
 - 若某计划文档被指定为“唯一主记录”，后续阶段状态、验收结论、延期与风险应优先回写该文档，而不是散落在聊天里。
 - 新增或调整本目录下的正式计划文档后，需同步更新本文件成员清单。
@@ -25,7 +25,7 @@
 | `docs/plans/2026-04-07-user-first-login-llm-key-gate.md` | 用户首次登录个人模型 Key 门禁与自助配置主记录；冻结“未配自己的 key 不得进入系统”的产品口径，并补充 owner Task Contract、前后端派工与验收口径 |
 | `docs/plans/2026-03-29-frontend-mainjs-splitting-execution-plan.md` | `frontend/main.js` 拆分执行主记录；承载 Phase、批次、进度与验收；**§2.1** 为「堵不如疏」默认可改落点与 `main.js` Review 提示 |
 | `docs/plans/problem-detail-migration-and-agent-loop/AGENTS.md` | ProblemDetail 迁移专项子目录说明；定义该目录内主记录与评审文档的职责边界 |
-| `docs/plans/problem-detail-migration-and-agent-loop/README.md` | ProblemDetail 迁移、旧 `frontend` build 产线、后端 prompt 托管与 Agent Loop 协议的唯一主记录；先统一收口，后续再按稳定度拆到 `docs/design/` / `docs/knowledge/` |
+| `docs/plans/problem-detail-migration-and-agent-loop/README.md` | ProblemDetail 迁移、旧 `frontend` build 产线、后端 prompt 托管与 Agent Loop 协议的唯一主记录；先统一收口，后续再按稳定度拆到 `docs/design/` |
 | `docs/plans/problem-detail-migration-and-agent-loop/2026-04-10-review.md` | 对 ProblemDetail 迁移主记录初稿的架构评审；指出 build/deploy 合同、双渲染快照、prompt registry 与 Agent Loop 验收缺口 |
 | `docs/plans/problem-detail-build-obfuscation-and-vue-unification/AGENTS.md` | ProblemDetail 工程化打包 / 轻混淆 / Vue 统一专项子目录说明；定义主记录、任务索引与任务级派工文档的职责边界 |
 | `docs/plans/problem-detail-build-obfuscation-and-vue-unification/README.md` | ProblemDetail 双轨专项唯一主记录；冻结 A 线 build/minify/轻混淆 与 B 线 online-only Vue 壳层统一工程边界、phase gate、风险与回滚口径 |

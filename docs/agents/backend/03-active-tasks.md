@@ -13,7 +13,7 @@
 - 涉及模块：
 - 一句话目标：
 - 阻塞：
-- 详述：→ `backend-agent.md` 对应节 **或** `docs/knowledge/backend/` 知识卡链接
+- 详述：→ `backend-agent.md` 对应节
 
 ---
 

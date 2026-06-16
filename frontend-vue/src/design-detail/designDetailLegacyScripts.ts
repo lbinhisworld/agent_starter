@@ -23,8 +23,7 @@ export function isDesignDetailTask1ScriptsReady(): boolean {
 
 function legacyTask1ScriptSrc(): string {
   const base = String(import.meta.env.BASE_URL || './').replace(/\/?$/, '/');
-  if (base.includes('/frontend/')) return `${base}js/task1BusinessInsight.js`;
-  return `${base}js/task1BusinessInsight.js`;
+  return `${base}static/js/task1BusinessInsight.js`;
 }
 
 function loadScriptOnce(src: string): Promise<void> {
@@ -59,7 +58,7 @@ export async function ensureDesignDetailTask1ScriptsReady(): Promise<void> {
   if (isDesignDetailTask1ScriptsReady()) return;
 
   try {
-    await import('../../../frontend/js/task1BusinessInsight.js');
+    await import('../legacy/task1BusinessInsight.js');
   } catch (e) {
     console.warn('[design-detail:task1-scripts] dynamic import failed', e);
   }

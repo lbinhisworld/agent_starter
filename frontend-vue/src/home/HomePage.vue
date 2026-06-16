@@ -323,29 +323,6 @@ const onListClick = async (e: MouseEvent) => {
     loadList();
     return;
   }
-  const reportBtn = t.closest?.('.btn-problem-follow-presales-report') as HTMLElement | null;
-  if (reportBtn) {
-    e.stopPropagation();
-    const ck = reportBtn.getAttribute('data-case-key') || '';
-    const it = findItemByCaseKey(ck);
-    const caseId = it?.id ?? it?.createdAt;
-    if (!isOnline()) {
-      (window.showError || alert)('售前方案仅支持 online 模式（需配置 BACKEND_API_URL 并登录）。');
-      return;
-    }
-    if (!caseId) {
-      (window.showError || alert)('无法打开报告：案例标识缺失。');
-      return;
-    }
-    try {
-      const u = new URL('report.html', window.location.href);
-      u.searchParams.set('caseId', String(caseId));
-      window.open(u.href, '_blank', 'noopener,noreferrer');
-    } catch {
-      (window.showError || alert)('无法打开报告页。');
-    }
-    return;
-  }
   const designBtn = t.closest?.('.btn-problem-follow-design') as HTMLElement | null;
   if (designBtn) {
     e.stopPropagation();
@@ -365,17 +342,6 @@ const onListClick = async (e: MouseEvent) => {
     if (an != null && String(an).trim() !== '') u.searchParams.set('archiveNo', String(an));
     window.location.href = u.pathname + u.search;
     return;
-  }
-  const startBtn = t.closest?.('.btn-problem-follow-start') as HTMLElement | null;
-  if (startBtn) {
-    e.stopPropagation();
-    const ck = startBtn.getAttribute('data-case-key') || '';
-    if (!ck) return;
-    const row = findItemByCaseKey(ck);
-    if (!row) return;
-    const caseId = row.id ?? row.createdAt;
-    if (caseId == null) return;
-    window.location.href = `index.html?caseId=${encodeURIComponent(String(caseId))}`;
   }
 };
 
@@ -667,9 +633,6 @@ const goToolExperience = () => {
                 <div v-if="isAdmin" v-html="c.createdByRow" />
                 <div class="problem-follow-card-date">时间 {{ c.dateTimeStr }}</div>
                 <div class="problem-follow-card-actions">
-                  <button type="button" class="btn-problem-follow-start" :data-case-key="c.caseKey">
-                    详情
-                  </button>
                   <button
                     type="button"
                     class="btn-problem-follow-design"
@@ -692,14 +655,6 @@ const goToolExperience = () => {
                     aria-label="删除"
                     v-html="cardIcons.delete"
                   />
-                  <button
-                    type="button"
-                    class="btn-problem-follow-presales-report"
-                    :data-case-key="c.caseKey"
-                    title="售前分析报告（新标签页）"
-                  >
-                    售前分析报告
-                  </button>
                 </div>
               </div>
             </div>

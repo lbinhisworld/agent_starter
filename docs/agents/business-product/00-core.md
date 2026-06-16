@@ -71,7 +71,6 @@
 | 当前阶段叙述 | `01-context.md` |
 | 输出格式、裁决框架、验收与提示词 | `02-playbooks.md` |
 | 活跃 BP 任务索引 | `03-active-tasks.md` |
-| 长篇专题（task11、修改模式、Skills 等） | `docs/knowledge/product/`（逐步迁入） |
 | 迁移完成前的历史全文 | `../business-product-agent.md`（参考，不新增流水） |
 
 ## 任务登记纪律

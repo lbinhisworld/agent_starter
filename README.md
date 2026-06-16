@@ -8,13 +8,13 @@
 
 ## 目录结构（你只需要记住这几个）
 
-- `frontend-vue/`：**唯一需要开发的源码工程**（Vue 3 + Vite）。入口页是 `home.html`，其余 Vue 页面见 `frontend-vue/AGENTS.md`。
-- `frontend/`：**运行时静态资源宿主**——承载被 `home.html` / `design-detail.html` 等运行时引用的共享脚本（`js/api.js`、`js/auth-runtime.js`、`js/core/problem-case-api.js` 等）与构建产物 `vue-auth-assets/`（已 gitignore，由 `npm run build` 生成）。
+- `frontend-vue/`：**唯一自包含前端工程**（Vue 3 + Vite）。入口页是 `home.html`，共享运行时资源在 `public/static/`、被 import 的 legacy JS 在 `src/legacy/`，其余 Vue 页面见 `frontend-vue/AGENTS.md`。
+- ~~`frontend/`~~：**已废弃**（2026-06-16 独立化重构，资源已迁入 `frontend-vue/`，目录改名 `frontend.bak/` 暂留备份）。
 - `backend/`：Node 后端（Express + Prisma）。
 
 > 已移除的纯原生页：`index.html`（企业信息/商业画布查询）与 `report.html`（售前分析报告）及其独占资源（含 `main.js`）已于 2026-06-16 删除。入口页现为 `home.html`。
 
-`docs/`：文档（部署见 `docs/deploy/`）。**前端阶段与沟通历史 UI**：见 `frontend/数字化问题跟进阶段设计.md`、`frontend/对话模型管理.md`（过程日志标签统一字号等见前者 §0.6、后者 §4.5）。
+`docs/`：文档（部署见 `docs/deploy/`）。**前端阶段与沟通历史 UI**：见 `frontend-vue/src/` 内相关设计与 `docs/` 下的阶段/对话模型文档。
 
 ---
 
@@ -28,7 +28,7 @@
 
 ## 1) 前端快速启动（必做）
 
-前端源码在 `frontend-vue/`（Vue 3 + Vite），生产构建产物输出到 `frontend/vue-auth-assets/`，由 `frontend/home.html` 等入口引用。
+前端源码在 `frontend-vue/`（Vue 3 + Vite，唯一自包含工程），生产构建产物输出到 `frontend-vue/dist/`，发布包 `frontend-vue/release/`（由 `npm run build:dist` 生成）。
 
 本地开发：
 
@@ -44,7 +44,8 @@ npm run dev
 
 ```bash
 cd frontend-vue
-npm run build   # 产物写入 frontend/vue-auth-assets/
+npm run build   # 产物写入 frontend-vue/dist/
+npm run build:dist  # 发布包写入 frontend-vue/release/（含 home-legacy.bundle 打包与 minify）
 ```
 
 ---
@@ -54,15 +55,15 @@ npm run build   # 产物写入 frontend/vue-auth-assets/
 先复制一份本地配置（不会提交到 Git）：
 
 ```bash
-cd smart_cto
-cp config.example.js config.local.js
+cd frontend-vue
+cp public/static/config.js public/static/config.local.js  # 或手动创建
 ```
 
 ### 2.1 本地模式（local）
 
 适合个人开发：**AI 直连 DeepSeek + 数据存 localStorage**。
 
-在 `smart_cto/config.local.js` 配置：
+在 `frontend-vue/public/static/config.local.js` 配置：
 
 - `MODE: 'local'`
 - `DEEPSEEK_API_KEY: '...'`
@@ -71,7 +72,7 @@ cp config.example.js config.local.js
 
 适合联调/共享数据：**AI + 数据统一走后端**。
 
-在 `smart_cto/config.local.js` 配置：
+在 `frontend-vue/public/static/config.local.js` 配置：
 
 - `MODE: 'online'`
 - `BACKEND_API_URL: 'http(s)://<host>/api'`

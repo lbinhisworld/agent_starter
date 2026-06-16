@@ -75,7 +75,7 @@
 
 1. 为 ProblemDetail 迁移、旧前端构建产线、后端 prompt 托管与 Agent Loop 建立唯一主记录。
 2. 在实现前冻结边界：`index.html?caseId=` 不变、生产 `online-only`、详情语义不因框架迁移漂移。
-3. 先把长篇计划统一收口到 `docs/plans/`，再逐步拆分到设计文与知识卡。
+3. 先把长篇计划统一收口到 `docs/plans/`，再逐步拆分到设计文。
 
 **当前已完成**
 
@@ -146,15 +146,14 @@
 
 **当前未关账项**
 
-1. `docs/knowledge/cross-cutting/2026-03-29-frontend-mainjs-governance.md` 尚未新增。
-2. `.cursor/rules/frontend-mainjs-governance.mdc` 尚未新增。
+1. `.cursor/rules/frontend-mainjs-governance.mdc` 尚未新增。
 3. 仅完成 Phase 0 文档建档与覆盖盘点，尚未进入代码迁移。
 
 **验收口径**
 
 - 主记录文档可独立恢复本轮拆分计划、状态、风险与下一批次。
 - `ARCH/FE` 台账均能回链到主记录。
-- Phase 0 在知识卡与 `.mdc` 落库前保持“进行中”，不得误记为已关闭。
+- Phase 0 在 `.mdc` 落库前保持“进行中”，不得误记为已关闭。
 
 ## 错误记录（本轮补记）
 
