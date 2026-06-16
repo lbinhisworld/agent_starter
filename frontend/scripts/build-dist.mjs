@@ -15,43 +15,6 @@ const enableLightObfuscation = enableMinify && !cliArgs.has('--no-obfuscation');
 const minifyStats = [];
 const obfuscationStats = [];
 
-const problemDetailBundleSources = [
-  'js/utils.js',
-  'js/object-state-machine-viz.js',
-  'js/api.js',
-  'js/storage-http-adapter.js',
-  'js/storage-indexeddb-adapter.js',
-  'js/task1BusinessInsight.js',
-  'js/preliminaryRequirement.js',
-  'js/task2BusinessCanvas.js',
-  'js/task3RequirementLogic.js',
-  'js/valueStream.js',
-  'js/task4ValueStream.js',
-  'js/task5ItStatus.js',
-  'js/task6PainPoint.js',
-  'js/storage.js',
-  'js/communication-history.js',
-  'js/localItGap.js',
-  'js/rendering.js',
-  'js/navigation.js',
-  'js/rolePermission.js',
-  'js/coreBusinessObject.js',
-  'js/core/problem-case-api.js',
-  'js/core/app-state.js',
-  'js/legacy/app-dom.js',
-  'js/legacy/problem-detail-renderer.js',
-  'js/legacy/problem-detail-events.js',
-  'js/core/problem-detail-chat.js',
-  'js/core/problem-detail-runtime.js',
-  'js/core/task2-companion-runtime.js',
-  'js/core/task8-global-itgap.js',
-  'js/core/problem-follow-shared.js',
-  'js/flow-exception-record.js',
-  'js/it-design-bpm-flow-render.js',
-  'js/itDesignSupplement.js',
-  'main.js',
-];
-
 const homeLegacyBundleSources = [
   'js/utils.js',
   'js/api.js',
@@ -61,15 +24,6 @@ const homeLegacyBundleSources = [
   'js/preliminaryRequirement.js',
   'js/storage.js',
   'js/core/problem-follow-shared.js',
-];
-
-const reportBundleSources = [
-  'js/utils.js',
-  'js/valueStream.js',
-  'js/core/task8-global-itgap.js',
-  'js/report-global-itgap-render.js',
-  'js/report-formal-render.js',
-  'js/report-page.js',
 ];
 
 const wrappedModuleSources = new Set([
@@ -88,7 +42,6 @@ const copiedFiles = [
   'config.js',
   'config.local.js',
   'styles.css',
-  'css/report.css',
   'js/config.js',
   'js/auth-runtime.js',
   'login.html',
@@ -97,26 +50,21 @@ const copiedFiles = [
 ];
 
 const copiedDirs = ['vue-auth-assets'];
-const minifiedHtmlFiles = ['index.html', 'home.html', 'login.html', 'admin.html', 'model-config.html', 'report.html'];
-const minifiedCssFiles = ['styles.css', 'css/report.css'];
-const minifiedJsFiles = ['js/problem-detail-app.bundle.js', 'js/home-legacy.bundle.js', 'js/report-app.bundle.js'];
+const minifiedHtmlFiles = ['home.html', 'login.html', 'admin.html', 'model-config.html'];
+const minifiedCssFiles = ['styles.css'];
+const minifiedJsFiles = ['js/home-legacy.bundle.js'];
 const obfuscatedJsFiles = [...minifiedJsFiles];
 const requiredDistFiles = [
-  'index.html',
   'home.html',
   'login.html',
   'admin.html',
   'model-config.html',
-  'report.html',
   'config.js',
   'config.local.js',
   'styles.css',
-  'css/report.css',
   'js/config.js',
   'js/auth-runtime.js',
-  'js/problem-detail-app.bundle.js',
   'js/home-legacy.bundle.js',
-  'js/report-app.bundle.js',
   'vue-auth-assets/admin.css',
   'vue-auth-assets/admin.js',
   'vue-auth-assets/home.css',
@@ -493,57 +441,6 @@ function buildBundle(relPaths, bundleName) {
   ].join('\n');
 }
 
-function buildIndexHtml() {
-  let html = normalizeNewlines(readSource('index.html'));
-
-  [
-    '  <script src="js/utils.js"></script>',
-    '  <script src="js/object-state-machine-viz.js"></script>',
-    '  <script src="js/api.js"></script>',
-    '  <script src="js/storage-http-adapter.js"></script>',
-    '  <script src="js/storage-indexeddb-adapter.js"></script>',
-    '  <script src="js/task1BusinessInsight.js"></script>',
-    '  <script src="js/preliminaryRequirement.js"></script>',
-    '  <script src="js/task2BusinessCanvas.js"></script>',
-    '  <script src="js/task3RequirementLogic.js"></script>',
-    '  <script src="js/valueStream.js"></script>',
-    '  <script src="js/task4ValueStream.js"></script>',
-    '  <script src="js/task5ItStatus.js"></script>',
-    '  <script src="js/task6PainPoint.js"></script>',
-    '  <script src="js/storage.js"></script>',
-    '  <script src="js/communication-history.js"></script>',
-    '  <script src="js/localItGap.js"></script>',
-    '  <script src="js/rendering.js"></script>',
-    '  <script src="js/navigation.js"></script>',
-    '  <script src="js/rolePermission.js"></script>',
-    '  <script src="js/coreBusinessObject.js"></script>',
-    '  <script type="module" src="js/core/problem-case-api.js"></script>',
-    '  <script type="module" src="js/core/app-state.js"></script>',
-    '  <script type="module" src="js/legacy/app-dom.js"></script>',
-    '  <script type="module" src="js/legacy/problem-detail-renderer.js"></script>',
-    '  <script type="module" src="js/legacy/problem-detail-events.js"></script>',
-    '  <script type="module" src="js/core/problem-detail-chat.js"></script>',
-    '  <script type="module" src="js/core/problem-detail-runtime.js"></script>',
-    '  <script type="module" src="js/core/task2-companion-runtime.js"></script>',
-    '  <script type="module" src="js/core/task8-global-itgap.js"></script>',
-    '  <script src="js/core/problem-follow-shared.js"></script>',
-    '  <script defer src="js/flow-exception-record.js"></script>',
-    '  <script defer src="js/it-design-bpm-flow-render.js"></script>',
-    '  <script defer src="js/itDesignSupplement.js"></script>',
-    '  <script defer src="main.js"></script>',
-  ].forEach((line) => {
-    html = removeExactLine(html, line);
-  });
-
-  html = insertAfterLine(
-    html,
-    '  <script src="js/auth-runtime.js"></script>',
-    '  <script src="js/problem-detail-app.bundle.js"></script>',
-  );
-
-  return html;
-}
-
 function buildHomeHtml() {
   let html = normalizeNewlines(readSource('home.html'));
 
@@ -569,29 +466,6 @@ function buildHomeHtml() {
   return html;
 }
 
-function buildReportHtml() {
-  let html = normalizeNewlines(readSource('report.html'));
-
-  [
-    '  <script src="js/utils.js"></script>',
-    '  <script src="js/valueStream.js"></script>',
-    '  <script type="module" src="js/core/task8-global-itgap.js"></script>',
-    '  <script src="js/report-global-itgap-render.js"></script>',
-    '  <script src="js/report-formal-render.js"></script>',
-    '  <script src="js/report-page.js"></script>',
-  ].forEach((line) => {
-    html = removeExactLine(html, line);
-  });
-
-  html = insertAfterLine(
-    html,
-    '  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>',
-    '  <script src="js/report-app.bundle.js"></script>',
-  );
-
-  return html;
-}
-
 async function buildDist() {
   fs.rmSync(distDir, { recursive: true, force: true });
   fs.mkdirSync(distDir, { recursive: true });
@@ -599,13 +473,9 @@ async function buildDist() {
   copiedFiles.forEach(copyFileToDist);
   copiedDirs.forEach(copyDirToDist);
 
-  writeDistFile('index.html', buildIndexHtml());
   writeDistFile('home.html', buildHomeHtml());
-  writeDistFile('report.html', buildReportHtml());
 
-  writeDistFile('js/problem-detail-app.bundle.js', buildBundle(problemDetailBundleSources, 'problem-detail-app.bundle.js'));
   writeDistFile('js/home-legacy.bundle.js', buildBundle(homeLegacyBundleSources, 'home-legacy.bundle.js'));
-  writeDistFile('js/report-app.bundle.js', buildBundle(reportBundleSources, 'report-app.bundle.js'));
 
   if (enableMinify) {
     applyMinifyToDist();
