@@ -16,5 +16,5 @@ window.APP_CONFIG = window.APP_CONFIG || {
   DEEPSEEK_MODEL: 'deepseek-chat',
 
   /** 后端 API 基础地址（以 /api 结尾）。MODE=online 时需要 */
-  BACKEND_API_URL: 'http://192.168.83.106/api',
+  BACKEND_API_URL: 'http://127.0.0.1:6668/api',
 };

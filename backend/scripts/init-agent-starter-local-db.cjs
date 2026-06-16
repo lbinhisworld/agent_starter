@@ -17,8 +17,8 @@ const BACKEND_ROOT = path.resolve(__dirname, '..');
 const REPO_ROOT = path.resolve(BACKEND_ROOT, '..');
 const ENV_FILE = path.join(BACKEND_ROOT, '.env');
 const ENV_TEMPLATE = path.join(BACKEND_ROOT, 'docs', 'dotenv.local.template');
-const FRONTEND_LOCAL_EXAMPLE = path.join(REPO_ROOT, 'frontend', 'config.local.example.js');
-const FRONTEND_LOCAL = path.join(REPO_ROOT, 'frontend', 'config.local.js');
+const FRONTEND_LOCAL_EXAMPLE = path.join(REPO_ROOT, 'frontend-vue', 'public', 'static', 'config.js');
+const FRONTEND_LOCAL = path.join(REPO_ROOT, 'frontend-vue', 'public', 'static', 'config.local.js');
 
 const DEFAULTS = {
   database: 'agent_starter',
@@ -26,7 +26,7 @@ const DEFAULTS = {
   password: '',
   host: '127.0.0.1',
   port: 3306,
-  backendPort: 3003,
+  backendPort: 6668,
   adminUsername: 'root',
   adminPassword: 'root',
 };
@@ -82,7 +82,7 @@ function ensureFrontendLocalConfig() {
   if (fs.existsSync(FRONTEND_LOCAL)) return;
   if (!fs.existsSync(FRONTEND_LOCAL_EXAMPLE)) return;
   fs.copyFileSync(FRONTEND_LOCAL_EXAMPLE, FRONTEND_LOCAL);
-  console.log('[init-db] 已从示例生成 frontend/config.local.js');
+  console.log('[init-db] 已从示例生成 frontend-vue/public/static/config.local.js');
 }
 
 async function tryCreateDatabaseAndGrant(dbCfg) {
