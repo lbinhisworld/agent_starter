@@ -34,7 +34,7 @@ Vue 登录页、管理端与统一 API 客户端，与 `frontend` 主站共享�
 
 **节奏**：平时以改 **`src/...`** 为主；**收口 / 发版前** 统一构建并提交 `frontend/vue-auth-assets/`（含 `version.txt`），与主站入口引用保持一致。
 
-**FE-20260616-independent**：`frontend-vue/` 已彻底独立，不再依赖 sibling `frontend/`（已废弃改名）。共享资源分布：被 import 的 legacy JS 在 `src/legacy/`（`design-detail/main.ts`、`home/main.ts` import `../legacy/...`），运行时 `<script>` 加载的在 `public/static/`（各 HTML 用 `static/*` 裸路径，dev 经 publicDir、build 复制到 `dist/static/`）。`vite.config.ts` 已删除 `dev-serve-sibling-frontend` 中间件与 `serve-static` 依赖；`outDir` 为 `dist/`，`emptyOutDir: true`。`src/design-detail/designDetailLegacyScripts.ts` 的 task1 fallback `<script>` 指向 `static/js/task1BusinessInsight.js`。联调请打开 **`http://localhost:5173/home.html`**（或同端口其它入口 HTML）；生产以 **`npm run build`** 后 **`dist/home.html`**（`vue-auth-assets/home.js`）或 `npm run build:dist` 后 `release/` 为准。
+**FE-20260616-independent**：`frontend-vue/` 已彻底独立，不再依赖 sibling `frontend/`（已废弃改名）。共享资源分布：被 import 的 legacy JS 在 `src/legacy/`（`design-detail/main.ts`、`home/main.ts` import `../legacy/...`），运行时 `<script>` 加载的在 `public/static/`（各 HTML 用 `static/*` 裸路径，dev 经 publicDir、build 复制到 `dist/static/`）。`vite.config.ts` 已删除 `dev-serve-sibling-frontend` 中间件与 `serve-static` 依赖；`outDir` 为 `dist/`，`emptyOutDir: true`。`src/design-detail/designDetailLegacyScripts.ts` 的 task1 fallback `<script>` 指向 `static/js/task1BusinessInsight.js`。联调请打开 **`http://localhost:6667/home.html`**（或同端口其它入口 HTML）；生产以 **`npm run build`** 后 **`dist/home.html`**（`vue-auth-assets/home.js`）或 `npm run build:dist` 后 `release/` 为准。
 
 ## 成员清单
 

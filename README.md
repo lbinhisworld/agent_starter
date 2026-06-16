@@ -38,7 +38,7 @@ npm install
 npm run dev
 ```
 
-联调打开 `http://localhost:5173/home.html`（详见 `frontend-vue/AGENTS.md`）。
+联调打开 `http://localhost:6667/home.html`（详见 `frontend-vue/AGENTS.md`）。
 
 生产/预览构建：
 

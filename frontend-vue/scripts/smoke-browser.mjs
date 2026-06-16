@@ -33,7 +33,7 @@ const shotDir = path.resolve(__dirname, '../smoke-shots');
 fs.rmSync(shotDir, { recursive: true, force: true });
 fs.mkdirSync(shotDir, { recursive: true });
 
-const BASE = 'http://localhost:5173';
+const BASE = 'http://localhost:6667';
 const PAGES = [
   'login.html',
   'home.html',
