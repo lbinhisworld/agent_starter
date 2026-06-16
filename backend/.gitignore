@@ -1,0 +1,13 @@
+# 本地环境配置（含敏感信息，勿提交）；.env.example 是脱敏模板，可入库
+.env
+.env.local
+!.env.example
+
+# 构建产物
+dist/
+
+# Prisma
+/prisma/migrations/dev.db*
+
+# 本地脚本状态与日志
+.local/

@@ -1,7 +1,10 @@
 import dotenv from 'dotenv';
 import { z } from 'zod';
 
+// 先加载 .env（本地主配置），再用 .env.local 覆盖同名变量（可选的临时覆盖文件）。
+// 两者均被 git 忽略；脱敏模板见 .env.example。
 dotenv.config();
+dotenv.config({ path: '.env.local', override: true });
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
