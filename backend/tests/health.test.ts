@@ -20,9 +20,9 @@ describe('health endpoint', () => {
 
     const response = await request(app)
       .get('/health')
-      .set('Origin', 'http://localhost:6667');
+      .set('Origin', 'http://localhost:6677');
 
     expect(response.status).toBe(200);
-    expect(response.headers['access-control-allow-origin']).toBe('http://localhost:6667');
+    expect(response.headers['access-control-allow-origin']).toBe('http://localhost:6677');
   });
 });

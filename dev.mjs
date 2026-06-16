@@ -12,7 +12,7 @@
  *   ① prisma generate  ② prisma migrate deploy（统一 deploy，避免 migrate dev 的 shadow db 权限错误）
  *   ③ kill 占用端口的旧进程（禁止端口顺延）  ④ npm run dev（ts-node-dev 热重载）
  *
- * 前端：frontend-vue/ 下 npm run dev（Vite，端口 6667）
+ * 前端：frontend-vue/ 下 npm run dev（Vite，端口 6677）
  *
  * 日志统一加前缀：[backend] / [frontend]；Ctrl+C 统一清理子进程。
  */
@@ -32,7 +32,7 @@ const onlyFrontend = args.has('--frontend');
 const skipDb = args.has('--skip-db');
 const runBackend = !onlyFrontend;
 const runFrontend = !onlyBackend;
-const FRONTEND_PORT = 6667; // frontend-vue vite 固定端口
+const FRONTEND_PORT = 6677; // frontend-vue vite 固定端口
 
 /** 从 backend/.env 读 PORT（默认 3000） */
 function readBackendPort() {
@@ -161,14 +161,14 @@ if (runBackend) {
 if (runFrontend) {
   // kill 占用前端端口的旧进程（与后端一致的"禁止顺延"口径）
   killPort(FRONTEND_PORT);
-  log('frontend', 'npm run dev（Vite，端口 6667）');
+  log('frontend', 'npm run dev（Vite，端口 6677）');
   const fe = spawnLong('frontend', 'npm', ['run', 'dev'], {
     cwd: FRONTEND_DIR,
     detached: true,
     env: { ...process.env, NODE_ENV: 'development' },
   });
   children.push(fe);
-  log('frontend', '前端启动中 → http://localhost:6667/home.html');
+  log('frontend', '前端启动中 → http://localhost:6677/home.html');
 }
 
 console.log('\n（Ctrl+C 退出并清理所有子进程）\n');

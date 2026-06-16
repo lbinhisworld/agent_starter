@@ -26,7 +26,7 @@ const DEFAULTS = {
   password: '',
   host: '127.0.0.1',
   port: 3306,
-  backendPort: 6668,
+  backendPort: 6688,
   adminUsername: 'root',
   adminPassword: 'root',
 };
