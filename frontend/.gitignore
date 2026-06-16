@@ -4,3 +4,6 @@
 .env.local
 config.local.js
 data.json
+
+# Vue 构建产物（由 frontend-vue build 生成，勿入库）
+vue-auth-assets/
