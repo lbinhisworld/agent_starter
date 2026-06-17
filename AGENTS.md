@@ -11,6 +11,7 @@
 
 ## 约束
 
+- **Git 提交与推送（强制）**：每次 `git commit` 之后、`git push` 之前，**必须先向用户展示将要推送的 commit 内容（commit message + 涉及文件）并等待用户确认**，未获明确同意不得 push。涉及数据通路/存储/鉴权/配置的改动，commit 前还须验证数据回填（如列表能加载出真实数据），不能只看页面无报错就提交。
 - **Cursor / VS Code 工作区主题**：本仓库采用 **暗黑蓝** 定制深色主题，配置见 `.vscode/settings.json`（说明见 `.cursor/AGENTS.md`）。
 - 若新增顶层模块或调整通信边界（前后端接口形态），需要更新本文件的描述。
 - 若以 `docs/agents/architect/00-core.md` 初始化为 **architect owner**，默认聚焦**架构判断、拆工派工、审查与验收口径**；未获明确授权前，不直接修改 `frontend-vue/`、`backend/` 业务代码。
