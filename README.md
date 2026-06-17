@@ -68,7 +68,7 @@ npm run build:dist  # 发布包写入 frontend-vue/release/（含 home-legacy.bu
 
 ## 3) 前端配置：后端地址
 
-> 本项目**统一 online 模式**：AI 调用与数据持久化均走后端。原有的 local 模式（前端直连 DeepSeek + IndexedDB）已于 2026-06-17 废弃，不再支持。
+> 本项目**统一 online 模式**：AI 调用与数据持久化均走后端。原有的 local 模式（前端直连 DeepSeek + IndexedDB）已于 2026-06-17 废弃，不再支持（`config.js` 的 `MODE` 字段锁定为 `'online'`，勿改）。
 
 前端默认后端地址写在 `frontend-vue/public/static/config.js` 的 `BACKEND_API_URL`。若你本机后端端口不同，复制一份本地覆盖（不会提交到 Git）：
 
