@@ -174,7 +174,6 @@ export default defineConfig({
             '  <script src="static/js/designDetailL65ItGapSystemPrompt.js"></script>',
             '  <script src="static/js/task1BusinessInsight.js"></script>',
             '  <script src="static/js/storage-http-adapter.js"></script>',
-            '  <script src="static/js/storage-indexeddb-adapter.js"></script>',
             '  <script src="static/js/storage.js"></script>',
           ].join('\n');
           return html.replace('</body>', `${legacy}\n</body>`);

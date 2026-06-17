@@ -2,7 +2,7 @@
 
 ## 目标
 
-让你在 **10 分钟内跑起来**本项目（前端 + 可选后端），并知道“本地模式 / 线上模式”怎么切。
+让你在 **10 分钟内跑起来**本项目（前端 + 后端）。
 
 ---
 
@@ -22,7 +22,7 @@
 
 - Node.js（推荐 LTS / 或团队统一版本）
 - Git
-- （可选）数据库：本地用 MariaDB/MySQL（连接方式见 `docs/本地MySQL搭建说明.md`）
+- 数据库：本地用 MariaDB/MySQL（连接方式见 `docs/本地MySQL搭建说明.md`）
 
 ---
 
@@ -66,38 +66,23 @@ npm run build:dist  # 发布包写入 frontend-vue/release/（含 home-legacy.bu
 
 ---
 
-## 2) 前端配置：本地模式 / 线上模式（二选一）
+## 3) 前端配置：后端地址
 
-先复制一份本地配置（不会提交到 Git）：
+> 本项目**统一 online 模式**：AI 调用与数据持久化均走后端。原有的 local 模式（前端直连 DeepSeek + IndexedDB）已于 2026-06-17 废弃，不再支持。
+
+前端默认后端地址写在 `frontend-vue/public/static/config.js` 的 `BACKEND_API_URL`。若你本机后端端口不同，复制一份本地覆盖（不会提交到 Git）：
 
 ```bash
 cd frontend-vue
-cp public/static/config.js public/static/config.local.js  # 或手动创建
+cp public/static/config.js public/static/config.local.js
+# 编辑 config.local.js，只保留并修改 BACKEND_API_URL
 ```
 
-### 2.1 本地模式（local）
-
-适合个人开发：**AI 直连 DeepSeek + 数据存 localStorage**。
-
-在 `frontend-vue/public/static/config.local.js` 配置：
-
-- `MODE: 'local'`
-- `DEEPSEEK_API_KEY: '...'`
-
-### 2.2 线上模式（online）
-
-适合联调/共享数据：**AI + 数据统一走后端**。
-
-在 `frontend-vue/public/static/config.local.js` 配置：
-
-- `MODE: 'online'`
-- `BACKEND_API_URL: 'http(s)://<host>/api'`
-
-注意：`BACKEND_API_URL` 必须是 **API 基础地址（以 `/api` 结尾）**，不要填 `/health`。
+`config.local.js` 会在 `config.js` 之后加载并覆盖配置。
 
 ---
 
-## 3) 后端启动（仅 MODE='online' 需要）
+## 4) 后端启动
 
 ```bash
 cd backend
@@ -111,7 +96,7 @@ npm run start
 - `GET /health`
 - `GET /api/problem-cases`
 
-### 3.1 数据库与 Prisma（有改表/首次部署才需要）
+### 4.1 数据库与 Prisma（有改表/首次部署才需要）
 
 - 有 migrations（推荐线上）：`npx prisma migrate deploy`
 - 本地快速对齐结构（谨慎）：`npx prisma db push`
@@ -121,14 +106,13 @@ npm run start
 
 ---
 
-## 4) 常见问题排查（最常用 3 个）
+## 5) 常见问题排查（最常用 3 个）
 
 - 前端能打开但接口报错：
-  - `MODE='local'`：检查 `DEEPSEEK_API_KEY` 是否填写正确
-  - `MODE='online'`：检查 `BACKEND_API_URL` 是否可访问，后端是否已启动
+  - 检查 `BACKEND_API_URL`（`config.js` 或 `config.local.js`）是否可访问，后端是否已启动
 
-- 后端“启动了但外部访问不了”：
-  - 先在服务器本机 `curl http://127.0.0.1:3000/health`
+- 后端"启动了但外部访问不了"：
+  - 先在服务器本机 `curl http://127.0.0.1:6688/health`
   - 再检查 Nginx/防火墙/安全组（部署细节见 `docs/deploy/02-虚拟机部署执行手册.md`）
 
 - 后端 build 报错：

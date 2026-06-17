@@ -69,8 +69,8 @@ function getBackendBaseUrl() {
 }
 
 function getMode() {
-  const cfg = (window as any).APP_CONFIG || {};
-  return String(cfg.MODE || 'local');
+  // local 模式（AI 直连 DeepSeek + IndexedDB）已于 2026-06-17 废弃，统一 online（走后端）。
+  return 'online';
 }
 
 function getJwtToken() {
