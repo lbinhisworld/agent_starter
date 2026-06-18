@@ -81,9 +81,21 @@ function prepareBackend() {
   const port = readBackendPort();
   log('backend', `目标端口: ${port}（来自 backend/.env，禁止顺延）`);
 
-  // 检查 backend/.env
+  // 检查 backend/.env（后端启动必需；缺失则打印引导并退出，不自动生成）
   if (!fs.existsSync(path.join(BACKEND_DIR, '.env'))) {
-    console.error('\n[backend] 缺少 backend/.env。请先执行：cp backend/.env.example backend/.env 并配置 DATABASE_URL');
+    console.error(`
+[backend] 未检测到 backend/.env（后端启动必需）。
+请按以下步骤创建后重新运行 node dev.mjs：
+
+  1. cp backend/.env.example backend/.env
+  2. 编辑 backend/.env，将 DATABASE_URL 的口令 change_me 改为本机数据库实际口令
+  3. 重新运行 node dev.mjs
+
+DATABASE_URL 示例：
+  mysql://smart_cto_app:你的口令@127.0.0.1:3306/smart_cto
+
+（前端无需配置即可启动：frontend-vue/public/static/config.js 已含默认 BACKEND_API_URL。）
+`);
     process.exit(1);
   }
 
